@@ -9,8 +9,8 @@ import java.util.Scanner;
  * use : first "new ATC()" for initializing drugLabels
  * 		 then "getLabel(key)"
  * 
- * param : key, a string describing the id of the drug, such as "S01AA01"
- * return : label, a string describing the name of the drug, such as "Chloramphenicol"
+ * input : key, a string describing the id of the drug, such as "S01AA01"
+ * output : label, a string describing the name of the drug, such as "Chloramphenicol"
  *
  */
 
