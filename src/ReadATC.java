@@ -21,7 +21,7 @@ public class ReadATC {
 	private static HashMap<String, String> drugLabels = new HashMap<String, String>(); // we want data like id_drug=label_drug inside
 
 	
-	private ReadATC() throws IOException {
+	public ReadATC() throws IOException {
 		
 		BufferedReader bf = new BufferedReader(new FileReader(atc_path)); // reading atc_path
 		String line = bf.readLine();
