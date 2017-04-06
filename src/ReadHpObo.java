@@ -13,7 +13,7 @@ import java.util.Scanner;
  * 			  "getId(name)"
  * 
  * input : symptom, a String describing a request of the user
- * output : a array containing the synonyms of the symptom 
+ * output : a array containing the symptom and the synonyms of the symptom 
  *
  * input : symptom, a String describing a request of the user
  * output : the id of this symptom
@@ -89,7 +89,9 @@ public class ReadHpObo {
 	
 	// used to get the synonyms corresponding to the name
 	public static ArrayList<String> getSynonyms(String name) {
-		return synonymsList.get(name);
+		ArrayList<String> name_synonyms = synonymsList.get(name);
+		name_synonyms.add(0,name);
+		return name_synonyms;
 	}
 	
 	
@@ -102,8 +104,8 @@ public class ReadHpObo {
 		System.out.println("Output \""+getId(value2)+"\" corresponds to input \""+value2+"\".");
 		String value3 = "Supernumerary metacarpal bones";
 		String value4 = "Aplasia/Hypoplasia of the nails";
-		System.out.println("Output \""+getSynonyms(value3)+"\" is the array of synonyms corresponding to input \""+value3+"\".");
-		System.out.println("Output \""+getSynonyms(value4)+"\" is the array of synonyms corresponding to input \""+value4+"\".");
+		System.out.println("Output \""+getSynonyms(value3)+"\" is the array of name and synonyms corresponding to input \""+value3+"\".");
+		System.out.println("Output \""+getSynonyms(value4)+"\" is the array of name and synonyms corresponding to input \""+value4+"\".");
 	}
 }
 
