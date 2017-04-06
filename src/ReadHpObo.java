@@ -12,11 +12,11 @@ import java.util.Scanner;
  * 		 then "getSynonyms(name)"
  * 			  "getId(name)"
  * 
- * input : symptom, a String describing a request of the user
- * output : a array containing the symptom and the synonyms of the symptom 
+ * input : symptom, a String describing a request of the user, such as "Abnormality of the toenails"
+ * output : a array containing the symptom and the synonyms of the symptom, such as "[Abnormality of the toenail, Abnormality of the toenails]"
  *
- * input : symptom, a String describing a request of the user
- * output : the id of this symptom
+ * input : symptom, a String describing a request of the user, such as "Abnormality of the toenails"
+ * output : the id of this symptom, such as "HP:0008388"
  *
  */
 
@@ -87,10 +87,23 @@ public class ReadHpObo {
 		return "none";
 	}
 	
+	
 	// used to get the synonyms corresponding to the name
 	public static ArrayList<String> getSynonyms(String name) {
+		boolean add = true;
 		ArrayList<String> name_synonyms = synonymsList.get(name);
-		name_synonyms.add(0,name);
+		if (name_synonyms != null) {
+			for (String synonym : name_synonyms) {
+				if (synonym.equals(name)) {
+					add = false;
+				}
+			} if (add) {
+				name_synonyms.add(0,name);
+			}
+		} else {
+			name_synonyms = new ArrayList<String>();
+			name_synonyms.add(name);
+		}
 		return name_synonyms;
 	}
 	
