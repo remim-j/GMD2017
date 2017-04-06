@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,7 +22,7 @@ public class ReadOmimOnto {
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
 
-                // use comma as separator
+                // use comma as a separator
                 String[] symptom = line.split(separator);
             	for(int i = 0; i < symptom.length; i++){
             		if(symptom[i].equals(CUI)){

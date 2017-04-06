@@ -44,19 +44,17 @@ public class ReadStitch implements Closeable{
 
     public String stitchCompoundIDToATCID(String stitchCompoundID){
     	String[] token = null;
-    	while(hasNextTokens()){
-    		while(token == null){
-    			token = nextTokens();
-    		}
-    		if(token.length == 4 && token[2].equals("ATC")){
-    			System.out.println(token[1]);
-    			if(token[0].equals(transformChemical(stitchCompoundID)) || token[1].equals(transformAlias(stitchCompoundID))){
-    				return token[3];
-    			}
-    		}
-    		token = nextTokens();
+    	boolean fini = false;
+    	while(hasNextTokens() && !fini){
+   			while(token == null || token.length != 4){ //If token is not complete
+   				token = nextTokens();
+   			}if(token[2].equals("BindingDB")){	//If we have done with ATC id
+   				fini = true;
+   			}else if(token[0].equals(transformChemical(stitchCompoundID)) || token[1].equals(transformAlias(stitchCompoundID))){
+  				return token[3];
+   			}
+   			token = nextTokens();
     	}
-    	System.out.println("No StitchCompoundID does match");
     	return null;
     }
 
