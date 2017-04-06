@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 /**
  * 
- * use : first "new ATC()" for initializing drugLabels
+ * use : first "new ATC()" to initialize drugLabels
  * 		 then "getLabel(key)"
  * 
  * input : key, a string describing the id of the drug, such as "S01AA01"
@@ -31,7 +31,7 @@ public class ReadATC {
 		String s = "";
 		String key = "";
 		
-		System.out.println("Initialising drugLabels...");
+		System.out.println("Initialising drugLabels..."); // to delete later
 		
 		while ((line = bf.readLine()) != null) { // reading each line
 			if (line.charAt(0) == 'E') { // this is an interesting line (see the hierarchy of the file for more understanding)
@@ -41,23 +41,26 @@ public class ReadATC {
 				while (i<n) { // studying each character of the line
 					if (line.charAt(i) == ' ' && key == "") { // gets the key, ie the first word after 'E'
 						if (s.length() > 1) {
-							System.out.print(s);
+							System.out.print(s); // to delete later
 							key = s;
 						}
 						s = "";
 						i++;
+						
 					} else if (line.charAt(i) == '(') { // things in brackets are not interesting for us
 						s = s.substring(0,s.length());
 						while (line.charAt(i) != ')') {
 							i++;
 						}
 						i++;
+						
 					} else if (line.charAt(i) == '[') { // things in brackets are not interesting for us
 						s = s.substring(0,s.length());
 						while (line.charAt(i) != ']') {
 							i++;
 						}
 						i++;
+						
 					} else { // gets the word (key or label) character by character. A label can contain spaces, but a key can't.
 						s += line.charAt(i);
 						i++;
@@ -65,7 +68,7 @@ public class ReadATC {
 				}
 			}
 			if (s != "") { // avoid void labels
-				System.out.println(" : "+s);
+				System.out.println(" : "+s); // to delete later
 				drugLabels.put(key.trim(),s.trim());
 			}
 			s = "";
@@ -75,22 +78,23 @@ public class ReadATC {
 		}	
 		bf.close();
 		
-		System.out.println("... drugLabels initialized.\n");
+		System.out.println("... drugLabels initialized.\n"); // to delete later
 	}
 	
 	
-	public String getLabel(String key) {
+	// used to get the label corresponding to the id
+	public static String getLabel(String key) {
 		return drugLabels.get(key);
 	}
+	
 	
 	// to delete later
 	public static void main (String[] args) throws IOException {
 		new ReadATC();
-		String key = "S01AA01";
-		String key2 = "C07BA07";
-		System.out.println("\""+drugLabels.get(key)+"\" corresponds to "+key+".");
-		System.out.println("\""+drugLabels.get(key2)+"\" corresponds to "+key2+".");
+		String key = "S01AA01"; //"Chloramphenicol"
+		String key2 = "C07BA07"; //"Sotalol and thiazides"
+		System.out.println("Output \""+getLabel(key)+"\" corresponds to input \""+key+"\".");
+		System.out.println("Output \""+getLabel(key2)+"\" corresponds to input \""+key2+"\".");
 	}
 	
 }
-
