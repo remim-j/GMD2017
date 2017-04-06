@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -5,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ReadOmimOnto {
+
+	/* Take a string like "Cxxxxxxx" and return ArrayList<String> of Preferred Labels and Synonyms like ["Cataract, BLABLA","Blabla, adfksmldfk"] */
 
 
 	public static ArrayList<String> CUIToPreferredLabel(String CUI) {

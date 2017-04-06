@@ -1,45 +1,97 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
+/**
+ * This class is the interface with the database.
+ **/
 
-public class ReadHpoAnnotations {
-	//phenoty_annotations.csv ou hpo_annotations.sqlite
-	
-	 public static void main(String[] args) {
+public class ReadHpoAnnotations{
 
-	        String csvFile = "/Users/mkyong/csv/country.csv";
-	        BufferedReader br = null;
-	        String line = "";
-	        String cvsSplitBy = ",";
+	private String dbName;
+	public Connection connection;
+	private Statement requete;
 
-	        try {
+	/**
+     * dbName is the name of the database
+     **/
 
-	            br = new BufferedReader(new FileReader(csvFile));
-	            while ((line = br.readLine()) != null) {
+	public ReadHpoAnnotations (String dbName){
 
-	                // use comma as separator
-	                String[] country = line.split(cvsSplitBy);
+		// Loading the sqlite driver JDBC, the class loader
 
-	                System.out.println("Country [code= " + country[4] + " , name=" + country[5] + "]");
+		try{
+			Class.forName("org.sqlite.JDBC");
+		}catch (ClassNotFoundException e1){
+			System.err.println(e1.getMessage());
+		}
+		this.dbName = dbName;
+		this.connection = null;
+	}
 
-	            }
+	/**
+     * true = database opened
+     *
+     */
+	public boolean connect (){
+		try{
+			// Etablit la connection
+			System.out.println("dfg");
+			connection = DriverManager.getConnection("jdbc:sqlite:"+this.dbName);
+			// Déclare l'objet qui permet de faire les requêtes
+			requete = connection.createStatement();
+			requete.executeUpdate("PRAGMA synchronous = OFF;");
+			requete.setQueryTimeout(30);
+			return true;
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;
+			}
+		}
 
-	        } catch (FileNotFoundException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        } finally {
-	            if (br != null) {
-	                try {
-	                    br.close();
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        }
+	/**
+     * true = connection closed
+     *
+     */
 
-	    }
+	public boolean disconnect (){
 
+		try{
+			if(connection != null){
+				connection.close();
+			}
+			return true;
+		}catch(SQLException e){
+			e.printStackTrace();
+			return false;}
+		}
+
+	/**
+     * Permet de faire une requête SQL
+     * @param requete La requête SQL (avec un ";" à la fin)
+     * @return Un ResultSet contenant le résultat de la requête
+     */
+
+	public ResultSet getResultOf (String requete){
+		try{
+			return this.requete.executeQuery(requete);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+     * Permet de modifier une entrée de la base de données.</br>
+     * @param requete La requete SQL de modification
+     */
+	public void updateValue (String requete){
+		try{
+			this.requete.executeUpdate(requete);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
 }
