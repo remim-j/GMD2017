@@ -90,7 +90,12 @@ public class ReadATC {
 	
 	// to delete later
 	public static void main (String[] args) throws IOException {
+		long startTime = System.nanoTime();
+		
 		new ReadATC();
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime);
+		System.out.println(duration/Math.pow(10,9));
 		String key = "S01AA01"; //"Chloramphenicol"
 		String key2 = "C07BA07"; //"Sotalol and thiazides"
 		System.out.println("Output \""+getLabel(key)+"\" corresponds to input \""+key+"\".");

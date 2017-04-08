@@ -20,13 +20,13 @@ import java.util.Scanner;
  *
  */
 
-public class ReadHpObo {
+public abstract class ReadHpObo {
 
 	private static String hpobo_path = "hp_obo_file";
 	private static HashMap<String, String> drugIds = new HashMap<String, String>(); // we want data like id_drug=name_drug inside
-	private static HashMap<String, ArrayList<String>> synonymsList = new HashMap<String, ArrayList<String>>();
+	private static HashMap<String,  ArrayList<String>> synonymsList = new HashMap<String, ArrayList<String>>();
 	
-	public ReadHpObo() throws IOException {
+	public static void ReadHpObo() throws IOException {
 		
 		int i,n;
 		String s = "", key = "", name = "";
@@ -35,12 +35,12 @@ public class ReadHpObo {
 		String line = bf.readLine();
 		Scanner sc = new Scanner(line);
 		
-		System.out.println("Initialising drugIds..."); // to delete later
+		//System.out.println("Initialising drugIds..."); // to delete later
 		
 		while ((line = bf.readLine()) != null) { // reading each line
 			if (line.length() > 7) {
 				if (line.substring(0, 2).equals("id")) {
-					System.out.print(line.substring(4)+" : "); // to delete later
+					//System.out.print(line.substring(4)+" : "); // to delete later
 					key = line.substring(4);
 					
 				} else if (line.substring(0,4).equals("name")) {
@@ -49,7 +49,7 @@ public class ReadHpObo {
 						temp = new ArrayList<String>();
 					}
 					name = line.substring(6);
-					System.out.println(name); // to delete later
+					//System.out.println(name); // to delete later
 					drugIds.put(key,name);
 					
 				} else if (line.substring(0,7).equals("synonym")) {
@@ -60,7 +60,7 @@ public class ReadHpObo {
 					
 					for (i=0; i<n; i++) { // studying each character of the line
 						if (line.charAt(i) == '"') {
-							System.out.println(key+" : "+s); // to delete later
+						//	System.out.println(key+" : "+s); // to delete later
 							drugIds.put(key,s);
 							temp.add(s);
 							break;
@@ -73,7 +73,7 @@ public class ReadHpObo {
 		}
 		bf.close();
 		
-		System.out.println("... drugIds initialized.\n"); // to delete later
+		//System.out.println("... drugIds initialized.\n"); // to delete later
 	}
 	
 	
@@ -110,15 +110,23 @@ public class ReadHpObo {
 	
 	// to delete later
 	public static void main (String[] args) throws IOException {
-		new ReadHpObo();
-		String value = "Annular pancreas"; //"HP:0001734"
+		long startTime = System.nanoTime();
+		ReadHpObo();
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime);
+		//System.out.println(duration/Math.pow(10,9));		String value = "Annular pancreas"; //"HP:0001734"
 		String value2 = "Abnormality of the toenails"; //"HP:0008388"
-		System.out.println("Output \""+getId(value)+"\" corresponds to input \""+value+"\".");
-		System.out.println("Output \""+getId(value2)+"\" corresponds to input \""+value2+"\".");
 		String value3 = "Supernumerary metacarpal bones";
 		String value4 = "Aplasia/Hypoplasia of the nails";
+		/*System.out.println("Output \""+getId(value)+"\" corresponds to input \""+value+"\".");
+		*///System.out.println("Output \""+getId(value2)+"\" corresponds to input \""+value2+"\".");
 		System.out.println("Output \""+getSynonyms(value3)+"\" is the array of name and synonyms corresponding to input \""+value3+"\".");
-		System.out.println("Output \""+getSynonyms(value4)+"\" is the array of name and synonyms corresponding to input \""+value4+"\".");
+		/*System.out.println("Output \""+getSynonyms(value4)+"\" is the array of name and synonyms corresponding to input \""+value4+"\".");*/
+		
+		
+		//An example of req
+		
+		
 	}
 }
 
