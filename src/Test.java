@@ -11,7 +11,6 @@ public class Test {
 	public static void main(String[] args) throws IOException, SQLException{
 
 		String ATCID;
-		ReadOmimOnto.CUIToClassID("C1846800");
 		ReadStitch TSV = new ReadStitch();
 		ATCID = TSV.stitchCompoundIDToATCID("CID00003393");
 		System.out.println(ATCID);
@@ -20,10 +19,12 @@ public class Test {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		String NO;
 		ReadHpoAnnotations BD = new ReadHpoAnnotations("C:/Users/user/Desktop/2A/GMD/projet/projet_2016-17/hpo/hpo_annotations.sqlite");
 		BD.connect();
-		ResultSet statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE sign_id = 'HP:00002890';");
+		ResultSet1 statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE sign_id = '"+id1+"';");
+		ResultSet2 statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE disease_id = '"+NO+"';");
+		ResultSet3 statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE disease_id = '"+id2+"';");
 		ResultSetMetaData statementmd = statement.getMetaData();
 		   int columnsNumber = statementmd.getColumnCount();
 		   System.out.println(statement == null);

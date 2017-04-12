@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public abstract  class ReadOmimOnto {
 
@@ -15,7 +14,6 @@ public abstract  class ReadOmimOnto {
         BufferedReader br = null;
         String line ;
         String separator = ",";
-        ArrayList<String> label = new ArrayList<String>();
 
         try {
 
@@ -25,7 +23,6 @@ public abstract  class ReadOmimOnto {
                 // Use comma as a separator
                 String[] symptom = line.split(separator);
                 String [] ID;
-                String classID;
             	for(int i = 0; i < symptom.length; i++){
             		if(symptom[i].equals(CUI)){
             			ID = symptom[0].split("/");
