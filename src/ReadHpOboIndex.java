@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Scanner;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -62,9 +63,10 @@ public class ReadHpOboIndex {
 	    	
 			// make a new, empty document
 			Document doc = null;
-			String line;
-			String string = "";
+			String line = "", string = "";
 			boolean first = true;
+			int i = 0;
+			
 			while ((line=br.readLine()) != null) {
 	 
 				// initialize and save
@@ -80,37 +82,55 @@ public class ReadHpOboIndex {
 				
 				// stocker et indexer name
 				if (line.startsWith("name:")) {
-					string = line.substring(7);
-					doc.add(new TextField("name ", line,Field.Store.YES));
+					string = line.substring(6);
+					doc.add(new TextField("name", line,Field.Store.YES));
 					System.out.println("name "+ string);
 				}
 				
 				// stocker synonym
 				if (line.startsWith("synonym:")) {
-					string = line.substring(10);
-					doc.add(new StoredField("synonym ", string));
+					line = line.substring(10);
+					i = 0;
+					string = "";					
+					while (line.charAt(i) != '"') {
+						string = string + line.substring(i,i+1);
+						i++;
+					}
+					doc.add(new StoredField("synonym", string));
 					System.out.println("synonym "+ string);
 				}
 			      
 				// indexer et stocker id
 				if (line.startsWith("id:")) {
-					string = line.substring(5);
-					doc.add(new TextField("id ", line,Field.Store.YES));
+					string = line.substring(4);
+					doc.add(new TextField("id", line, Field.Store.YES));
 					System.out.println("id "+ string);
 				}
 			      
 				// indexer def
 				if (line.startsWith("def:")) {
-					string = line.substring(6);
-					doc.add(new TextField("def ", line,Field.Store.NO));
+					line = line.substring(6);
+					i = 0;
+					string = "";					
+					while (line.charAt(i) != '"') {
+						string = string + line.substring(i,i+1);
+						i++;
+					}
+					doc.add(new TextField("def", string, Field.Store.NO));
 					System.out.println("def "+ string);
 				}
 				
 				// indexer is_a
 				if (line.startsWith("is_a:")) {
-					string = line.substring(7);
-					doc.add(new TextField("is_a ", line,Field.Store.NO));
-					System.out.println("is_a "+ string);
+					line = line.substring(6);
+					i = 0;
+					string = "";					
+					while (line.charAt(i) != '!') {
+						string = string + line.substring(i,i+1);
+						i++;
+					}
+					doc.add(new TextField("is_a", string.trim(), Field.Store.NO));
+					System.out.println("is_a "+ string.trim());
 				}
 	    	  
 	      }
