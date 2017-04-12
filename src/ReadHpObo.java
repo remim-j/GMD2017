@@ -1,132 +1,223 @@
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
 
-/**
- * 
- * use : first "new ReadHpObo()" to initialize drugIds
- * 		 then "getSynonyms(name)"
- * 			  "getId(name)"
- * 
- * input : symptom, a String describing a request of the user, such as "Abnormality of the toenails"
- * output : a array containing the symptom and the synonyms of the symptom, such as "[Abnormality of the toenail, Abnormality of the toenails]"
- *
- * input : symptom, a String describing a request of the user, such as "Abnormality of the toenails"
- * output : the id of this symptom, such as "HP:0008388"
- *
- */
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
 
-public abstract class ReadHpObo {
+/** Simple command-line based search demo. */
+public class ReadHpObo {
 
-	private static String hpobo_path = "hp_obo_file";
-	private static HashMap<String, String> drugIds = new HashMap<String, String>(); // we want data like id_drug=name_drug inside
-	private static HashMap<String,  ArrayList<String>> synonymsList = new HashMap<String, ArrayList<String>>();
-	
-	public static void ReadHpObo() throws IOException {
-		
-		int i,n;
-		String s = "", key = "", name = "";
-		ArrayList<String> temp = new ArrayList<String>();
-		BufferedReader bf = new BufferedReader(new FileReader(hpobo_path)); // reading hpobo_path
-		String line = bf.readLine();
-		Scanner sc = new Scanner(line);
-		
-		//System.out.println("Initialising drugIds..."); // to delete later
-		
-		while ((line = bf.readLine()) != null) { // reading each line
-			if (line.length() > 7) {
-				if (line.substring(0, 2).equals("id")) {
-					//System.out.print(line.substring(4)+" : "); // to delete later
-					key = line.substring(4);
-					
-				} else if (line.substring(0,4).equals("name")) {
-					if (!temp.isEmpty()) {
-						synonymsList.put(name,temp);
-						temp = new ArrayList<String>();
-					}
-					name = line.substring(6);
-					//System.out.println(name); // to delete later
-					drugIds.put(key,name);
-					
-				} else if (line.substring(0,7).equals("synonym")) {
-					line = line.substring(10);
-					sc = new Scanner(line);
-					n = line.length();
-					s = "";
-					
-					for (i=0; i<n; i++) { // studying each character of the line
-						if (line.charAt(i) == '"') {
-						//	System.out.println(key+" : "+s); // to delete later
-							drugIds.put(key,s);
-							temp.add(s);
-							break;
-						} else {
-							s = s + line.substring(i,i+1);
-						}
-					}
-				}
-			}			
-		}
-		bf.close();
-		
-		//System.out.println("... drugIds initialized.\n"); // to delete later
-	}
-	
-	
-	// used to get the id corresponding to the name
-	public static String getId(String value) {
-		for (Entry<String,String> entry : drugIds.entrySet()) { //studying each entry of the hashmap
-			if (entry.getValue().equals(value)) {
-				return entry.getKey();
-			}
-		}
-		return "none";
-	}
-	
-	
-	// used to get the synonyms corresponding to the name
-	public static ArrayList<String> getSynonyms(String name) {
-		boolean add = true;
-		ArrayList<String> name_synonyms = synonymsList.get(name);
-		if (name_synonyms != null) {
-			for (String synonym : name_synonyms) {
-				if (synonym.equals(name)) {
-					add = false;
-				}
-			} if (add) {
-				name_synonyms.add(0,name);
-			}
-		} else {
-			name_synonyms = new ArrayList<String>();
-			name_synonyms.add(name);
-		}
-		return name_synonyms;
-	}
-	
-	
-	// to delete later
-	public static void main (String[] args) throws IOException {
-		long startTime = System.nanoTime();
-		ReadHpObo();
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime);
-		//System.out.println(duration/Math.pow(10,9));		String value = "Annular pancreas"; //"HP:0001734"
-		String value2 = "Abnormality of the toenails"; //"HP:0008388"
-		String value3 = "Supernumerary metacarpal bones";
-		String value4 = "Aplasia/Hypoplasia of the nails";
-		/*System.out.println("Output \""+getId(value)+"\" corresponds to input \""+value+"\".");
-		*///System.out.println("Output \""+getId(value2)+"\" corresponds to input \""+value2+"\".");
-		System.out.println("Output \""+getSynonyms(value3)+"\" is the array of name and synonyms corresponding to input \""+value3+"\".");
-		/*System.out.println("Output \""+getSynonyms(value4)+"\" is the array of name and synonyms corresponding to input \""+value4+"\".");*/
-		
-		
-		//An example of req
-		
-		
-	}
+  private ReadHpObo() {}
+
+  /** Simple command-line based search demo. */
+  public static void main(String[] args) throws Exception {
+	// explication d'utilisation
+    String usage =
+      "Usage:\tjava org.apache.lucene.demo.SearchFiles [-index dir] [-field f] [-repeat n] [-queries file] [-query string] [-raw] [-paging hitsPerPage]\n\nSee http://lucene.apache.org/core/4_1_0/demo/ for details.";
+    if (args.length > 0 && ("-h".equals(args[0]) || "-help".equals(args[0]))) {
+      System.out.println(usage);
+      System.exit(0);
+    }
+    
+    // initialisation des variables
+    String index = "/home/aurore/workspace/GMD/index/HpObo";
+    String field = "name";
+    String queries = null;
+    int repeat = 0;
+    boolean raw = false;
+    String queryString = null;
+    int hitsPerPage = 10;
+    
+    // récupération des arguments
+    for(int i = 0;i < args.length;i++) {
+      if ("-index".equals(args[i])) {
+        index = args[i+1];
+        i++;
+      } else if ("-field".equals(args[i])) {
+        field = args[i+1];
+        i++;
+      } else if ("-queries".equals(args[i])) {
+        queries = args[i+1];
+        i++;
+      } else if ("-query".equals(args[i])) {
+        queryString = args[i+1];
+        i++;
+      } else if ("-repeat".equals(args[i])) {
+        repeat = Integer.parseInt(args[i+1]);
+        i++;
+      } else if ("-raw".equals(args[i])) {
+        raw = true;
+      } else if ("-paging".equals(args[i])) {
+        hitsPerPage = Integer.parseInt(args[i+1]);
+        if (hitsPerPage <= 0) {
+          System.err.println("There must be at least 1 hit per page.");
+          System.exit(1);
+        }
+        i++;
+      }
+    }
+    
+    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
+    IndexSearcher searcher = new IndexSearcher(reader);
+    Analyzer analyzer = new StandardAnalyzer();
+
+    BufferedReader in = null;
+    if (queries != null) {
+      in = Files.newBufferedReader(Paths.get(queries), StandardCharsets.UTF_8);
+    } else {
+      in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+    }
+    QueryParser parser = new QueryParser(field, analyzer);
+    while (true) {
+      if (queries == null && queryString == null) {  // prompt the user
+        System.out.println("Enter query: ");
+      }
+
+      String line = queryString != null ? queryString : in.readLine();
+
+      if (line == null || line.length() == -1) {
+        break;
+      }
+
+      line = line.trim();
+      if (line.length() == 0) {
+        break;
+      }
+      
+      Query query = parser.parse(line);
+      System.out.println("Searching for: " + query.toString(field));
+            
+      if (repeat > 0) {                           // repeat & time as benchmark
+        Date start = new Date();
+        for (int i = 0; i < repeat; i++) {
+          searcher.search(query, 100);
+        }
+        Date end = new Date();
+        System.out.println("Time: "+(end.getTime()-start.getTime())+"ms");
+      }
+
+      doPagingSearch(in, searcher, query, hitsPerPage, raw, queries == null && queryString == null);
+
+      if (queryString != null) {
+        break;
+      }
+    }
+    reader.close();
+  }
+
+  /**
+   * This demonstrates a typical paging search scenario, where the search engine presents 
+   * pages of size n to the user. The user can then go to the next page if interested in
+   * the next hits.
+   * 
+   * When the query is executed for the first time, then only enough results are collected
+   * to fill 5 result pages. If the user wants to page beyond this limit, then the query
+   * is executed another time and all hits are collected.
+   * 
+   */
+  public static void doPagingSearch(BufferedReader in, IndexSearcher searcher, Query query, 
+                                     int hitsPerPage, boolean raw, boolean interactive) throws IOException {
+ 
+    // Collect enough docs to show 5 pages
+    TopDocs results = searcher.search(query, 5 * hitsPerPage);
+    ScoreDoc[] hits = results.scoreDocs;
+    
+    int numTotalHits = results.totalHits;
+    System.out.println(numTotalHits + " total matching documents");
+
+    int start = 0;
+    int end = Math.min(numTotalHits, hitsPerPage);
+        
+    while (true) {
+      if (end > hits.length) {
+        System.out.println("Only results 1 - " + hits.length +" of " + numTotalHits + " total matching documents collected.");
+        System.out.println("Collect more (y/n) ?");
+        String line = in.readLine();
+        if (line.length() == 0 || line.charAt(0) == 'n') {
+          break;
+        }
+
+        hits = searcher.search(query, numTotalHits).scoreDocs;
+      }
+      
+      end = Math.min(hits.length, start + hitsPerPage);
+      
+      for (int i = start; i < end; i++) {
+        if (raw) {                              // output raw format
+          System.out.println("doc="+hits[i].doc+" score="+hits[i].score);
+          continue;
+        }
+
+        Document doc = searcher.doc(hits[i].doc);
+        String id = doc.get("id");
+        if (id != null) {
+          System.out.println((i+1) + ". " + id);
+          String name = doc.get("name");
+          if (name != null) {
+            System.out.println("   " + doc.get("name"));
+          }
+        } else {
+          System.out.println((i+1) + ". " + "No path for this document");
+        }
+                  
+      }
+
+      if (!interactive || end == 0) {
+        break;
+      }
+
+      if (numTotalHits >= end) {
+        boolean quit = false;
+        while (true) {
+          System.out.print("Press ");
+          if (start - hitsPerPage >= 0) {
+            System.out.print("(p)revious page, ");  
+          }
+          if (start + hitsPerPage < numTotalHits) {
+            System.out.print("(n)ext page, ");
+          }
+          System.out.println("(q)uit or enter number to jump to a page.");
+          
+          String line = in.readLine();
+          if (line.length() == 0 || line.charAt(0)=='q') {
+            quit = true;
+            break;
+          }
+          if (line.charAt(0) == 'p') {
+            start = Math.max(0, start - hitsPerPage);
+            break;
+          } else if (line.charAt(0) == 'n') {
+            if (start + hitsPerPage < numTotalHits) {
+              start+=hitsPerPage;
+            }
+            break;
+          } else {
+            int page = Integer.parseInt(line);
+            if ((page - 1) * hitsPerPage < numTotalHits) {
+              start = (page - 1) * hitsPerPage;
+              break;
+            } else {
+              System.out.println("No such page");
+            }
+          }
+        }
+        if (quit) break;
+        end = Math.min(numTotalHits, start + hitsPerPage);
+      }
+    }
+  }
 }
-
