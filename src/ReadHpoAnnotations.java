@@ -6,6 +6,8 @@ import java.sql.Statement;
 
 /**
  * This class is the interface with the database.
+ * Take "HP:xxxxxxx" String as an argument
+ * Return disease_id (for ex : 215510)
  **/
 
 public class ReadHpoAnnotations{
@@ -35,12 +37,12 @@ public class ReadHpoAnnotations{
      * true = database opened
      *
      */
+
 	public boolean connect (){
 		try{
-			// Etablit la connection
-			System.out.println("dfg");
+			// Establish the connection
 			connection = DriverManager.getConnection("jdbc:sqlite:"+this.dbName);
-			// Déclare l'objet qui permet de faire les requêtes
+			// Declaring the object wich allows to do statements
 			requete = connection.createStatement();
 			requete.executeUpdate("PRAGMA synchronous = OFF;");
 			requete.setQueryTimeout(30);
@@ -69,9 +71,9 @@ public class ReadHpoAnnotations{
 		}
 
 	/**
-     * Permet de faire une requête SQL
-     * @param requete La requête SQL (avec un ";" à la fin)
-     * @return Un ResultSet contenant le résultat de la requête
+     * The SQL statement
+     * @param is the SQL statement which ends with a ";"
+     * @return a ResultSet containing the result of the statement
      */
 
 	public ResultSet getResultOf (String requete){
@@ -83,15 +85,4 @@ public class ReadHpoAnnotations{
 		return null;
 	}
 
-	/**
-     * Permet de modifier une entrée de la base de données.</br>
-     * @param requete La requete SQL de modification
-     */
-	public void updateValue (String requete){
-		try{
-			this.requete.executeUpdate(requete);
-		}catch (SQLException e){
-			e.printStackTrace();
-		}
-	}
 }

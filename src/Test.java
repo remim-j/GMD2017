@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 
 public class Test {
 
 	public static void main(String[] args) throws IOException, SQLException{
 
-		/*String ATCID;
-		ReadOmimOnto.CUIToPreferredLabel("C3549655");
+		String ATCID;
+		ReadOmimOnto.CUIToClassID("C1846800");
 		ReadStitch TSV = new ReadStitch();
 		ATCID = TSV.stitchCompoundIDToATCID("CID00003393");
 		System.out.println(ATCID);
@@ -24,31 +23,24 @@ public class Test {
 
 		ReadHpoAnnotations BD = new ReadHpoAnnotations("C:/Users/user/Desktop/2A/GMD/projet/projet_2016-17/hpo/hpo_annotations.sqlite");
 		BD.connect();
-		ResultSet statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE sign_id = 'HP:00002890';");*/
-		
-		
-		/*An example of test*/
-		ReadHpObo.ReadHpObo();
-		String userInput="hand";
-		
-		try {
-			ArrayList<String> nameAndSynonyms=ReadHpObo.getSynonyms(userInput);
-		System.out.println(nameAndSynonyms.size());
-			for (String s:nameAndSynonyms){
-				System.out.println(s);
-				ArrayList<String> cui=AccesSider.cuiToCure(s);
-				for (String s1:cui){
-					ArrayList<String> preferedLabel=ReadOmimOnto.CUIToPreferredLabel(s1);
-					for (String s2: preferedLabel){
-						System.out.println(s2);
-					}
-				}
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		ResultSet statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE sign_id = 'HP:00002890';");
+		ResultSetMetaData statementmd = statement.getMetaData();
+		   int columnsNumber = statementmd.getColumnCount();
+		   System.out.println(statement == null);
+		   System.out.println(columnsNumber);
+		   while(statement.next()){
+		       statement.getString(1);
+		   }
+		   while (statement.next()) {
+			   for (int i = 1; i <= columnsNumber; i++) {
+				   if (i > 1){
+					   System.out.print(",  ");
+				   }
+		           String columnValue = statement.getString(i);
+		           System.out.print(columnValue + " " + statementmd.getColumnName(i));
+		       }
+		   }
+		System.out.println(statement);
 	}
 
 }
