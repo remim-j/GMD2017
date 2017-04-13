@@ -49,9 +49,9 @@ public class ReadOminIndex {
 	    	
 			// make a new, empty document
 			Document doc = null;
-			String line = "", no = "";
+			String line = "", no = "", temp = "";
 			boolean first = true;
-			int n = 0;
+			int i = 0, n = 0;
 			
 			while ((line=br.readLine()) != null) {
 	 
@@ -70,20 +70,23 @@ public class ReadOminIndex {
 				if (line.startsWith("*FIELD* TI")) {
 					n = no.length();
 					line = br.readLine().substring(n+2);
-					doc.add(new StoredField("TI", line));
-					System.out.println("TI "+ line); // to delete later
-					
-					while (!((line = br.readLine()).startsWith("*FIELD*"))) {
-						doc.add(new StoredField("TI", line));
-						System.out.println("TI "+ line); // to delete later
+					temp = "";
+					for (i = 0;i < line.length();i++) {
+						if (line.charAt(i) == ';') {
+							break;
+						} else {
+							temp = temp + line.charAt(i);
+						}
 					}
+					doc.add(new StoredField("TI", temp));
+					//System.out.println("TI "+ temp); // to delete later
 				}
 				
 				// indexer CS
 				if (line.startsWith("*FIELD* CS")) {
 					while (!((line = br.readLine()).startsWith("*FIELD*"))) {
 						doc.add(new TextField("CS", line, Field.Store.NO));
-						System.out.println("CS "+ line); // to delete later
+						//System.out.println("CS "+ line); // to delete later
 					}
 				}
 				
@@ -91,7 +94,7 @@ public class ReadOminIndex {
 				if (line.startsWith("*FIELD* NO")) {
 					no = br.readLine();
 					doc.add(new TextField("NO", no, Field.Store.NO));
-					System.out.println("NO "+ no); // to delete later
+					//System.out.println("NO "+ no); // to delete later
 				}  
 	      }
 
