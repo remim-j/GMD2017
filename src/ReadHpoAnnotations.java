@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
 import org.sqlite.*;
 
 /**
@@ -92,13 +93,13 @@ public abstract class ReadHpoAnnotations{
 	}
 	
 	
-	public ArrayList<String> getDiseaseLabelBySignId(String signID ) throws Exception{
-		this.connect();
+	public static ArrayList<String> getDiseaseLabelBySignId(String signID ) throws Exception{
+		connect();
 		String myQuery="SELECT disease_label "
 						+ "FROM phenotype_annotation "
-						+ "WHERE sign_id = ?;";
+						+ "WHERE sign_id = ? ;";
 		statement =connection.prepareStatement(myQuery);
-		
+		System.out.println(signID);
 		statement.setString(1,signID);
 		ResultSet res=statement.executeQuery();
 				
@@ -131,10 +132,25 @@ public abstract class ReadHpoAnnotations{
 	
 	public static void main (String[] args){
 		try {
-			ArrayList<String> liste=getDiseaseLabelByDiseaseId("603629");
+			/*ArrayList<String> liste=getDiseaseLabelByDiseaseId("603629");
 			for (String s : liste){
 				System.out.println(s);
+			}*/
+			ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name","Small for gestational age");
+			if (symptomIdFromHpObo !=null){
+				//On fait tous le trajet suivant le mapping
+				
+
+				for (String s : symptomIdFromHpObo){
+					ArrayList<String> diseaseLabel=ReadHpoAnnotations.getDiseaseLabelBySignId(s);
+					System.out.println(diseaseLabel.size());
+					for(String s1:diseaseLabel){
+						//System.out.println(s1);
+					}
+				}
 			}
+
+		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

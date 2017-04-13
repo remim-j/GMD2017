@@ -31,12 +31,12 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
  *
  */
 
-public class ReadHpObo {
+public abstract class ReadHpObo {
 	
-	private String index = "/home/aurore/workspace/GMD/index/HpObo";
+	private static String index = "index/HpObo";
 	private static ArrayList<String> symptomeId = new ArrayList<String>();
 
-	private ReadHpObo(String field, String queryString) throws IOException, ParseException {
+	private static void ReadHpObo(String field, String queryString) throws IOException, ParseException {
 		
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
@@ -44,6 +44,7 @@ public class ReadHpObo {
 		QueryParser parser = new QueryParser(field, analyzer);
 		//TermQuery parser = new TermQuery(new Term(field.toString()));
 		//Query query = parser.parse(queryString);
+		
 		Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
 		
 		//System.out.println("Searching for: " + query.toString(field)); // to delete later
@@ -60,17 +61,17 @@ public class ReadHpObo {
 	    String id = "", name = "";
 	    for (int i = 0; i < numTotalHits; i++) {
 	    	Document doc = searcher.doc(hits[i].doc);
-	    	id = doc.get("id").substring(4);
-	    	name = doc.get("name").substring(6);
-	    	symptomeId.add(id.substring(4));
-	    	System.out.println(id+" ("+name+")"); // to delete later
+	    	id = doc.get("id").substring(doc.get("id").indexOf(":")+1);
+	    	name = doc.get("name").substring(doc.get("name").indexOf(":")+1);
+	    	symptomeId.add(id.trim());
+	    	//System.out.println(id+" ("+name+")"); // to delete later
 	    }
 		reader.close();
 	}
 	
 	
 	public static ArrayList<String> getId(String field, String query) throws IOException, ParseException {
-		new ReadHpObo(field, query);
+		ReadHpObo(field, query);
 		return symptomeId;
 	}
 
@@ -79,17 +80,21 @@ public class ReadHpObo {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Examples Hp.obo :");
 		String field = "name";
-		String query = "Failure to thrive";
+		String query = "Small for gestational age";
 		System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		long startTime = System.nanoTime();
 		ArrayList<String> output = getId(field, query);
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime);
-		field = "synonym";
+		for (String s:output){
+			System.out.println(s);
+		}
+		//System.out.println();
+		/*field = "synonym";
 		query = "Abnormal growth";
 		System.out.println("\nInput \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		output = getId(field, query);
-		System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
+		System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));*/
 	}
 	
 }
