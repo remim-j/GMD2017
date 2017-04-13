@@ -96,15 +96,14 @@ public class ReadATC {
 		long duration = (endTime - startTime);
 		String key = "S01AA01"; //"Chloramphenicol"
 		String key2 = "C07BA07"; //"Sotalol and thiazides"
-		System.out.println("Examples :");
+		System.out.println("Examples ATC :");
 		System.out.println("Output \""+getLabel(key)+"\" corresponds to input \""+key+"\".");
 		startTime = System.nanoTime();
 		System.out.println("Output \""+getLabel(key2)+"\" corresponds to input \""+key2+"\".");
 		endTime = System.nanoTime();
 		long duration2 = (endTime - startTime);
-		System.out.println("\nTime needed to initialize : "+duration/Math.pow(10,9));
-		System.out.println("Time needed for one request : "+duration2/Math.pow(10,9));
+		System.out.println("\nTime needed for initializing ATC : "+duration/Math.pow(10,9));
+		System.out.println("Time needed for one request ATC : "+duration2/Math.pow(10,9));
 	}
 	
 }
-

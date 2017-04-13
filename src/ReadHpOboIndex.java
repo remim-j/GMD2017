@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.Scanner;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -23,32 +21,20 @@ import org.apache.lucene.store.FSDirectory;
 public class ReadHpOboIndex {
   
 	private ReadHpOboIndex() {
-		String indexPath = "index/HpObo";
+		String indexPath = "/home/aurore/workspace/GMD/index/HpObo";
 		String docsPath = "hp_obo_file";
 	    final Path docDir = Paths.get(docsPath);
-	    boolean create = true;
-	    Date start = new Date();
 
 	    try {
-	    	System.out.println("Indexing to directory '" + indexPath + "'...");
+	    	System.out.println("Indexing Hp.obo to directory '" + indexPath + "'..."); // to delete later
 	    	Directory dir = FSDirectory.open(Paths.get(indexPath));
 	    	Analyzer analyzer = new StandardAnalyzer();
 	    	IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
-
-	    	if (create) {
-	    		iwc.setOpenMode(OpenMode.CREATE);
-	    	} else {
-	    		iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
-	    	}
-
+	    	iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
 	    	IndexWriter writer = new IndexWriter(dir, iwc);
 	    	indexDoc(writer, docDir, Files.getLastModifiedTime(docDir).toMillis());
 	    	writer.close();
-	
-	    	Date end = new Date();
-	    	System.out.println(end.getTime() - start.getTime() + " total milliseconds");
-
-		// si erreur
+	    	
 	    } catch (IOException e) {
 	      System.out.println(" caught a " + e.getClass() +
 	       "\n with message: " + e.getMessage());
@@ -74,20 +60,20 @@ public class ReadHpOboIndex {
 					if (first) {
 						first = false;
 					} else {
-						System.out.println("adding " + file);
+						//System.out.println("adding " + file); // to delete later
 						writer.addDocument(doc);
 					}
 					doc = new Document();
 				}
 				
-				// stocker et indexer name
+				// stocker and indexer name
 				if (line.startsWith("name:")) {
 					string = line.substring(6);
 					doc.add(new TextField("name", line,Field.Store.YES));
-					System.out.println("name "+ string);
+					//System.out.println("name "+ string); // to delete later
 				}
 				
-				// stocker synonym
+				// indexer synonym
 				if (line.startsWith("synonym:")) {
 					line = line.substring(10);
 					i = 0;
@@ -96,18 +82,18 @@ public class ReadHpOboIndex {
 						string = string + line.substring(i,i+1);
 						i++;
 					}
-					doc.add(new StoredField("synonym", string));
-					System.out.println("synonym "+ string);
+					doc.add(new TextField("synonym", string, Field.Store.NO));
+					//System.out.println("synonym "+ string); // to delete later
 				}
 			      
-				// indexer et stocker id
+				// indexer and stocker id
 				if (line.startsWith("id:")) {
 					string = line.substring(4);
 					doc.add(new TextField("id", line, Field.Store.YES));
-					System.out.println("id "+ string);
+					//System.out.println("id "+ string); // to delete later
 				}
 			      
-				// indexer def
+				// stocker def
 				if (line.startsWith("def:")) {
 					line = line.substring(6);
 					i = 0;
@@ -116,11 +102,11 @@ public class ReadHpOboIndex {
 						string = string + line.substring(i,i+1);
 						i++;
 					}
-					doc.add(new TextField("def", string, Field.Store.NO));
-					System.out.println("def "+ string);
+					doc.add(new StoredField("def", string));
+					//System.out.println("def "+ string); // to delete later
 				}
 				
-				// indexer is_a
+				// stocker is_a
 				if (line.startsWith("is_a:")) {
 					line = line.substring(6);
 					i = 0;
@@ -129,10 +115,9 @@ public class ReadHpOboIndex {
 						string = string + line.substring(i,i+1);
 						i++;
 					}
-					doc.add(new TextField("is_a", string.trim(), Field.Store.NO));
-					System.out.println("is_a "+ string.trim());
+					doc.add(new StoredField("is_a", string.trim()));
+					//System.out.println("is_a "+ string.trim()); // to delete later
 				}
-	    	  
 	      }
 
 		} catch (Exception e){
@@ -141,6 +126,10 @@ public class ReadHpOboIndex {
 	}
 
 	public static void main(String[] args) {
+		long startTime = System.nanoTime();
 		new ReadHpOboIndex(); 
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime);
+		System.out.println("\nTime needed for indexing Hp.obo : "+duration/Math.pow(10,9));
 	}
 }
