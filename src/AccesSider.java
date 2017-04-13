@@ -22,9 +22,9 @@ public abstract class AccesSider {
 		//Requette SQL
 		String myQuery="SELECT * "+
 				" FROM meddra_all_se "+
-				" Where lower(side_effect_name) LIKE ? ; ";
+				" Where lower(side_effect_name) = ? ; ";
 		PreparedStatement st=con.prepareStatement(myQuery);
-		st.setString(1,"%"+(side_effect).toLowerCase()+"%"); //I take all diseases which contains the word
+		st.setString(1,(side_effect).toLowerCase()); //I take all diseases which contains the word
 		ResultSet res=st.executeQuery();
 		
 		ArrayList<String> listeIdMedicaments=new ArrayList<String>();
@@ -56,9 +56,9 @@ public static ArrayList<String> stitchCompoundIdToCure(String concept_name) thro
 		//Requette SQL
 		String myQuery="SELECT * "+
 				" FROM meddra_all_indications "+
-				" Where lower(concept_name) LIKE ? ; ";
+				" Where lower(concept_name)= ? ; ";
 		PreparedStatement st=con.prepareStatement(myQuery);
-		st.setString(1,"%"+(concept_name).toLowerCase()+"%"); //I take all diseases which contains the word
+		st.setString(1,(concept_name).toLowerCase()); //I take all diseases which contains the word
 		ResultSet res=st.executeQuery();
 		
 		ArrayList<String> listeIdMedicaments=new ArrayList<String>();
@@ -88,9 +88,9 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	//Requette SQL
 	String myQuery="SELECT * "+
 			" FROM meddra_all_indications "+
-			" Where lower(concept_name) LIKE ? ; ";
+			" Where lower(concept_name)= ? ; ";
 	PreparedStatement st=con.prepareStatement(myQuery);
-	st.setString(1,"%"+(concept_name).toLowerCase()+"%"); //I take all diseases which contains the word
+	st.setString(1,(concept_name).toLowerCase()); //I take all diseases which contains the word
 	ResultSet res=st.executeQuery();
 	
 	ArrayList<String> listeCui=new ArrayList<String>();
@@ -114,7 +114,7 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	
 	public static void main(String[] args){
 		try{
-			ArrayList<String> liste=cuiToCure("Extra long bones of hand");//
+			ArrayList<String> liste=cuiToCure("Failure");//
 			for (String s : liste){
 				System.out.println(s.toString());
 			}

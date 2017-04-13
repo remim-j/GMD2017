@@ -1,8 +1,11 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import org.sqlite.*;
 
 /**
  * This class is the interface with the database.
@@ -10,17 +13,17 @@ import java.sql.Statement;
  * Return disease_id (for ex : 215510)
  **/
 
-public class ReadHpoAnnotations{
+public abstract class ReadHpoAnnotations{
 
-	private String dbName;
-	public Connection connection;
-	private Statement requete;
+	private static String dbName;
+	public static Connection connection;
+	private static PreparedStatement statement;
 
 	/**
      * dbName is the name of the database
      **/
 
-	public ReadHpoAnnotations (String dbName){
+	public static void ReadHpoAnnotations (){
 
 		// Loading the sqlite driver JDBC, the class loader
 
@@ -29,8 +32,9 @@ public class ReadHpoAnnotations{
 		}catch (ClassNotFoundException e1){
 			System.err.println(e1.getMessage());
 		}
-		this.dbName = dbName;
-		this.connection = null;
+		dbName ="hpo_annotations.sqlite";
+;
+		connection = null;
 	}
 
 	/**
@@ -38,14 +42,15 @@ public class ReadHpoAnnotations{
      *
      */
 
-	public boolean connect (){
+	public static boolean connect (){
 		try{
+			ReadHpoAnnotations();
 			// Establish the connection
-			connection = DriverManager.getConnection("jdbc:sqlite:"+this.dbName);
+			connection = DriverManager.getConnection("jdbc:sqlite:"+dbName);
 			// Declaring the object wich allows to do statements
-			requete = connection.createStatement();
-			requete.executeUpdate("PRAGMA synchronous = OFF;");
-			requete.setQueryTimeout(30);
+			
+			//statement.executeUpdate("PRAGMA synchronous = OFF;");
+			//statement.setQueryTimeout(30);
 			return true;
 		}catch(SQLException e){
 			e.printStackTrace();
@@ -78,11 +83,64 @@ public class ReadHpoAnnotations{
 
 	public ResultSet getResultOf (String requete){
 		try{
-			return this.requete.executeQuery(requete);
+			//statement=this.connection.prepareStatement(requette)
+			return this.statement.executeQuery(requete);
 		}catch (SQLException e){
 			e.printStackTrace();
 		}
 		return null;
 	}
-
+	
+	
+	public ArrayList<String> getDiseaseLabelBySignId(String signID ) throws Exception{
+		this.connect();
+		String myQuery="SELECT disease_label "
+						+ "FROM phenotype_annotation "
+						+ "WHERE sign_id = ?;";
+		statement =connection.prepareStatement(myQuery);
+		
+		statement.setString(1,signID);
+		ResultSet res=statement.executeQuery();
+				
+		ArrayList<String> listeDiseaseLabel=new ArrayList<String>();
+		while (res.next()){
+			String label =res.getString("disease_label");
+			listeDiseaseLabel.add(label);
+		}
+		return listeDiseaseLabel;
+	}
+	
+	public static ArrayList<String> getDiseaseLabelByDiseaseId(String deseaseID ) throws Exception{
+		connect();
+		String myQuery="SELECT disease_label "
+						+ "FROM phenotype_annotation "
+						+ "WHERE disease_id = ? ;";
+		statement =connection.prepareStatement(myQuery);
+		
+		statement.setString(1,deseaseID);
+		ResultSet res=statement.executeQuery();
+				
+		ArrayList<String> listeDiseaseLabel=new ArrayList<String>();
+		while (res.next()){
+			String label =res.getString("disease_label");
+			listeDiseaseLabel.add(label);
+		}
+		return listeDiseaseLabel;
+	}
+	
+	
+	public static void main (String[] args){
+		try {
+			ArrayList<String> liste=getDiseaseLabelByDiseaseId("603629");
+			for (String s : liste){
+				System.out.println(s);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+		
 }
+

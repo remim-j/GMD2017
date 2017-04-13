@@ -19,12 +19,12 @@ public class Test {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String NO;
+		/*String NO;
 		ReadHpoAnnotations BD = new ReadHpoAnnotations("C:/Users/user/Desktop/2A/GMD/projet/projet_2016-17/hpo/hpo_annotations.sqlite");
 		BD.connect();
-		ResultSet1 statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE sign_id = '"+id1+"';");
-		ResultSet2 statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE disease_id = '"+NO+"';");
-		ResultSet3 statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE disease_id = '"+id2+"';");
+		ResultSet statement = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE sign_id = '"+id+"';");
+		ResultSet statement1 = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE disease_id = '"+NO+"';");
+		ResultSet statement2 = BD.getResultOf("SELECT disease_id AND disease_db FROM phenotype_annotation WHERE disease_id = '"+id2+"';");
 		ResultSetMetaData statementmd = statement.getMetaData();
 		   int columnsNumber = statementmd.getColumnCount();
 		   System.out.println(statement == null);
@@ -42,6 +42,7 @@ public class Test {
 		       }
 		   }
 		System.out.println(statement);
+		*/
 	}
 
 }

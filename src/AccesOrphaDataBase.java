@@ -39,7 +39,8 @@ public class AccesOrphaDataBase {
 	//http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/diseases/_view/GetDiseasesNumber?key=512
 	
 	public static ArrayList<String> GetDeseaseByClinicalSign(String symptom){
-		
+		symptom=symptom.replace(" ","%20");
+
 		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?key=%22"+symptom+"%22";
 		long duration=0;
 		ArrayList<String> diseases= new ArrayList<String>();
@@ -74,6 +75,46 @@ public class AccesOrphaDataBase {
 			diseases.add(symptom+"  is not found as a symptom ");
 		}
 		return diseases;
+	}
+	
+public static ArrayList<String> GetDeseaseIdByClinicalSign(String symptom){
+		
+	symptom=symptom.replace(" ","%20");
+	System.out.println(symptom);
+		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?key=%22"+symptom+"%22";
+		long duration=0;
+		ArrayList<String> diseaseIdList= new ArrayList<String>();
+		try {			
+			URL url = new URL(StringUrl);
+	
+			long startTime = System.nanoTime();
+			Reader in = new InputStreamReader(url.openStream());
+
+			JSONObject json = (JSONObject) JSONValue.parse(in);
+			 JSONArray Array =((JSONArray)json.get("rows"));
+			 
+			 for (int i=0;i<Array.size();i++){
+				 /*we parse the Json to obtain the name of te disease*/
+				 JSONObject object=(JSONObject) Array.get(i);
+				 JSONObject objectValue =((JSONObject)object.get("value"));
+				 JSONObject objectDisease=((JSONObject)objectValue.get("disease"));
+				 Long diseaseIdLong=((Long)objectDisease.get("OrphaNumber"));
+				 String diseaseId=diseaseIdLong.toString();
+				 
+				 /*add the disease to the the list*/
+				 diseaseIdList.add(diseaseId);
+			 }
+			 
+			long endTime = System.nanoTime();
+			duration = (endTime - startTime);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		//System.out.println(duration/Math.pow(10, 9));
+		if (diseaseIdList.size()==0){
+			return null;
+		}
+		return diseaseIdList;
 	}
 	
 public static ArrayList<String> GetDeseaseByDiseaseId(int num){
@@ -117,7 +158,7 @@ public static ArrayList<String> GetDeseaseByDiseaseId(int num){
 	
 	public static void main(String[] args) {
 		
-		ArrayList<String>liste =GetDeseaseByDiseaseId(5);
+		ArrayList<String>liste =GetDeseaseByClinicalSign("Anomalies of ear and hearing");
 		for (String s : liste){
 			System.out.println(s);
 		}
