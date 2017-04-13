@@ -18,21 +18,21 @@ import org.apache.lucene.store.FSDirectory;
 
 /**
  * 
- * use : first launch ReadHpOboIndex.java to create the index (once)
- *       then getId(field, query)
+ * use : first launch ReadOmimIndex.java to create the index (once)
+ *       then getTI(field, query)
  * 
- * input : field, the field on witch we want to make the research, such as "name"
- *         query, a string describing the entry of the user, such as "Failure to thrive"
- * output : symptomeId, a table containing the id of the correspondences to the query on the field
+ * input : field, the field on witch we want to make the research, such as "CS"
+ *         query, a string describing the entry of the user, such as "Hyperreflexia"
+ * output : symptomTI, a table containing the title of the diseases of the correspondences to the query on the field
  *
  */
 
-public abstract class ReadHpObo {
+public class ReadOmim {
 	
-	private static String index = "/home/aurore/workspace/GMD/index/HpObo";
-	private static ArrayList<String> symptomeId = new ArrayList<String>();
+	private String index = "/home/aurore/workspace/GMD/index/Omim";
+	private static ArrayList<String> symptomTI = new ArrayList<String>();
 
-	private static void ReadHpObo(String field, String queryString) throws IOException, ParseException {
+	private ReadOmim(String field, String queryString) throws IOException, ParseException {
 		
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
@@ -40,7 +40,6 @@ public abstract class ReadHpObo {
 		QueryParser parser = new QueryParser(field, analyzer);
 		//TermQuery parser = new TermQuery(new Term(field.toString()));
 		//Query query = parser.parse(queryString);
-		
 		Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
 		
 		//System.out.println("Searching for: " + query.toString(field)); // to delete later
@@ -51,46 +50,47 @@ public abstract class ReadHpObo {
 	    int numTotalHits = results.totalHits;
 	    //System.out.println(numTotalHits + " total matching documents"); // to delete later
 	    
-	    symptomeId = new ArrayList<String>();
+	    symptomTI = new ArrayList<String>();
 	    
 	    hits = searcher.search(query, numTotalHits).scoreDocs;
-	    String id = "", name = "";
+	    String TI = "", name = "";
 	    for (int i = 0; i < numTotalHits; i++) {
 	    	Document doc = searcher.doc(hits[i].doc);
-	    	id = doc.get("id").substring(doc.get("id").indexOf(":")+2);
-	    	name = doc.get("name").substring(doc.get("name").indexOf(":")+2);
-	    	symptomeId.add(id);
-	    	System.out.println(id+" ("+name+")"); // to delete later
+	    	if (doc.get("TI") != null) {
+	    		TI = doc.get("TI");
+	    	}
+	    	symptomTI.add(TI);
+	    	//System.out.println(TI); // to delete later
 	    }
 		reader.close();
 	}
 	
 	
-	public static ArrayList<String> getId(String field, String query) throws IOException, ParseException {
-		ReadHpObo(field, query);
-		return symptomeId;
+	public static ArrayList<String> getTI(String field, String query) throws IOException, ParseException {
+		new ReadOmim(field, query);
+		return symptomTI;
 	}
 
 	
 	// to delete later
 	public static void main(String[] args) throws Exception {
-		System.out.println("Examples Hp.obo :");
-		String field = "name";
-		String query = "Small for gestational age";
+		System.out.println("Examples Omim :");
+		String field = "CS";
+		String query = "Hyperreflexia";
 		System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		long startTime = System.nanoTime();
-		ArrayList<String> output = getId(field, query);
+		ArrayList<String> output = getTI(field, query);
+		for (String out : output) {
+			System.out.println(out);
+		}
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime);
-		for (String out : output) {
-			//System.out.println(out);
-		}
-		field = "synonym";
-		query = "Abnormal growth";
+		field = "NO";
+		query = "100050";
 		System.out.println("\nInput \""+query+"\" on field \""+field+"\" corresponds to output : \n");
-		output = getId(field, query);
+		output = getTI(field, query);
 		for (String out : output) {
-			//System.out.println(out);
+			System.out.println(out);
 		}
 		System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
 	}
