@@ -11,10 +11,15 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 
@@ -34,12 +39,12 @@ public class ReadHpObo {
     }
     
     // initialisation des variables
-    String index = "/home/aurore/workspace/GMD/index/HpObo";
+    String index = "index/HpObo";
     String field = "name";
     String queries = null;
     int repeat = 0;
     boolean raw = false;
-    String queryString = null;
+    String queryString = "Urinary";
     int hitsPerPage = 10;
     
     // récupération des arguments
@@ -81,24 +86,28 @@ public class ReadHpObo {
     } else {
       in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
     }
-    QueryParser parser = new QueryParser(field, analyzer);
+   QueryParser parser = new QueryParser(field, analyzer);
+  // TermQuery parser = new TermQuery(new Term(field.toString()));
+
     while (true) {
       if (queries == null && queryString == null) {  // prompt the user
         System.out.println("Enter query: ");
       }
-
+      
       String line = queryString != null ? queryString : in.readLine();
 
       if (line == null || line.length() == -1) {
         break;
       }
-
       line = line.trim();
       if (line.length() == 0) {
         break;
       }
-      
-      Query query = parser.parse(line);
+     // Query query = parser.parse(line);
+      Query query=parser.createBooleanQuery(field,line,BooleanClause.Occur.MUST );
+
+  	
+  	      System.out.println(query);
       System.out.println("Searching for: " + query.toString(field));
             
       if (repeat > 0) {                           // repeat & time as benchmark
