@@ -99,7 +99,7 @@ public abstract class ReadHpoAnnotations{
 						+ "FROM phenotype_annotation "
 						+ "WHERE sign_id = ? ;";
 		statement =connection.prepareStatement(myQuery);
-		System.out.println(signID);
+		
 		statement.setString(1,signID);
 		ResultSet res=statement.executeQuery();
 				
@@ -124,7 +124,12 @@ public abstract class ReadHpoAnnotations{
 		ArrayList<String> listeDiseaseLabel=new ArrayList<String>();
 		while (res.next()){
 			String label =res.getString("disease_label");
-			listeDiseaseLabel.add(label);
+			
+			if (!listeDiseaseLabel.contains(label)){/* we avoid to add the same name many times because a 
+			/*desease_id will always match with the same desease_label*/
+				listeDiseaseLabel.add(label);
+
+			}
 		}
 		return listeDiseaseLabel;
 	}
@@ -136,16 +141,27 @@ public abstract class ReadHpoAnnotations{
 			for (String s : liste){
 				System.out.println(s);
 			}*/
-			ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name","Small for gestational age");
+			/*ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name","Small for gestational age");
 			if (symptomIdFromHpObo !=null){
 				//On fait tous le trajet suivant le mapping
 				
-
 				for (String s : symptomIdFromHpObo){
 					ArrayList<String> diseaseLabel=ReadHpoAnnotations.getDiseaseLabelBySignId(s);
 					System.out.println(diseaseLabel.size());
 					for(String s1:diseaseLabel){
-						//System.out.println(s1);
+						System.out.println(s1);
+					}
+				}
+			}*/
+			ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign("Anomalies of ear and hearing");
+
+			if (diseaseIdFromOrpha != null){
+				/*On fait tous le trajet suivant le mapping*/
+				for (String s:diseaseIdFromOrpha ){
+					//System.out.println(s);
+					ArrayList<String> diseaseLabelFromHpoAnnotation=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
+					for (String s2 : diseaseLabelFromHpoAnnotation){
+						System.out.println(s+ "  :  "+s2);
 					}
 				}
 			}

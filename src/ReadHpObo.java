@@ -29,7 +29,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public abstract class ReadHpObo {
 	
-	private static String index = "/home/aurore/workspace/GMD/index/HpObo";
+	private static String index = "index/HpObo";
 	private static ArrayList<String> symptomeId = new ArrayList<String>();
 
 	private static void ReadHpObo(String field, String queryString) throws IOException, ParseException {
@@ -52,15 +52,16 @@ public abstract class ReadHpObo {
 	    //System.out.println(numTotalHits + " total matching documents"); // to delete later
 	    
 	    symptomeId = new ArrayList<String>();
-	    
-	    hits = searcher.search(query, numTotalHits).scoreDocs;
+	    if(numTotalHits!=0){
+		    hits = searcher.search(query, numTotalHits).scoreDocs;
+
+	    }
 	    String id = "", name = "";
 	    for (int i = 0; i < numTotalHits; i++) {
 	    	Document doc = searcher.doc(hits[i].doc);
 	    	id = doc.get("id").substring(doc.get("id").indexOf(":")+2);
 	    	name = doc.get("name").substring(doc.get("name").indexOf(":")+2);
 	    	symptomeId.add(id);
-	    	System.out.println(id+" ("+name+")"); // to delete later
 	    }
 		reader.close();
 	}
@@ -76,7 +77,7 @@ public abstract class ReadHpObo {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Examples Hp.obo :");
 		String field = "name";
-		String query = "Small for gestational age";
+		String query = "Anomalies of ear and hearing";
 		System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		long startTime = System.nanoTime();
 		ArrayList<String> output = getId(field, query);

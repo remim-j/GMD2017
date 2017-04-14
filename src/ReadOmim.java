@@ -27,12 +27,12 @@ import org.apache.lucene.store.FSDirectory;
  *
  */
 
-public class ReadOmim {
+public abstract class ReadOmim {
 	
-	private String index = "/home/aurore/workspace/GMD/index/Omim";
+	private static String index = "index/Omim";
 	private static ArrayList<String> symptomTI = new ArrayList<String>();
 
-	private ReadOmim(String field, String queryString) throws IOException, ParseException {
+	private static void ReadOmim(String field, String queryString) throws IOException, ParseException {
 		
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
@@ -51,8 +51,10 @@ public class ReadOmim {
 	    //System.out.println(numTotalHits + " total matching documents"); // to delete later
 	    
 	    symptomTI = new ArrayList<String>();
-	    
-	    hits = searcher.search(query, numTotalHits).scoreDocs;
+	    if(numTotalHits!=0){
+		    hits = searcher.search(query, numTotalHits).scoreDocs;
+
+	    }
 	    String TI = "", name = "";
 	    for (int i = 0; i < numTotalHits; i++) {
 	    	Document doc = searcher.doc(hits[i].doc);
@@ -67,7 +69,7 @@ public class ReadOmim {
 	
 	
 	public static ArrayList<String> getTI(String field, String query) throws IOException, ParseException {
-		new ReadOmim(field, query);
+		ReadOmim(field, query);
 		return symptomTI;
 	}
 
@@ -76,7 +78,7 @@ public class ReadOmim {
 	public static void main(String[] args) throws Exception {
 		System.out.println("Examples Omim :");
 		String field = "CS";
-		String query = "Hyperreflexia";
+		String query = "Hyperreflexia of m";
 		System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		long startTime = System.nanoTime();
 		ArrayList<String> output = getTI(field, query);

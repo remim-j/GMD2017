@@ -15,13 +15,13 @@ import java.util.Scanner;
  */
 
 
-public class ReadATC {
+public abstract class ReadATC {
 	
 	private static String atc_path = "atc_file";
 	private static HashMap<String, String> drugLabels = new HashMap<String, String>(); // we want data like id_drug=label_drug inside
 
 	
-	public ReadATC() throws IOException {
+	public static void ReadATC() throws IOException {
 		
 		BufferedReader bf = new BufferedReader(new FileReader(atc_path)); // reading atc_path
 		String line = bf.readLine();
@@ -84,14 +84,21 @@ public class ReadATC {
 	
 	// used to get the label corresponding to the id
 	public static String getLabel(String key) {
-		return drugLabels.get(key);
+		try {
+			ReadATC();
+			return drugLabels.get(key);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	
 	// to delete later
 	public static void main (String[] args) throws IOException {
 		long startTime = System.nanoTime();
-		new ReadATC();
+		
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime);
 		String key = "S01AA01"; //"Chloramphenicol"

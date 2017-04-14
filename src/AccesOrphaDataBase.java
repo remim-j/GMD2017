@@ -70,15 +70,15 @@ public class AccesOrphaDataBase {
 		}
 		//System.out.println(duration/Math.pow(10, 9));
 		if (diseases.size()==0){
-			diseases.add(symptom+"  is not found as a symptom ");
-		}
+			return null;		
+			}
 		return diseases;
 	}
 	
 public static ArrayList<String> GetDeseaseIdByClinicalSign(String symptom){
 		
 	symptom=symptom.replace(" ","%20");
-	System.out.println(symptom);
+	//System.out.println(symptom);
 		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?key=%22"+symptom+"%22";
 		long duration=0;
 		ArrayList<String> diseaseIdList= new ArrayList<String>();
@@ -156,7 +156,7 @@ public static ArrayList<String> GetDeseaseByDiseaseId(int num){
 	
 	public static void main(String[] args) {
 		
-		ArrayList<String>liste =GetDeseaseByClinicalSign("Anomalies of ear and hearing");
+		ArrayList<String>liste =GetDeseaseIdByClinicalSign("Anomalies of ear and hearing");
 		for (String s : liste){
 			System.out.println(s);
 		}

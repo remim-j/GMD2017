@@ -21,8 +21,8 @@ import org.apache.lucene.store.FSDirectory;
 public class ReadOminIndex {
   
 	private ReadOminIndex() {
-		String indexPath = "/home/aurore/workspace/GMD/index/Omim";
-		String docsPath = "omim_file";
+		String indexPath = "index/Omim";
+		String docsPath = "omim.txt";
 	    final Path docDir = Paths.get(docsPath);
 
 	    try {

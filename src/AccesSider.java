@@ -114,9 +114,19 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	
 	public static void main(String[] args){
 		try{
-			ArrayList<String> liste=cuiToCure("Failure");//
+			/*ArrayList<String> liste=cuiToCure("Failure");//
 			for (String s : liste){
 				System.out.println(s.toString());
+			}*/
+			ArrayList<String> idOriginOfSideEffectFromSider=AccesSider.idMedocCauseEffetSecondaire("Failure to thrive");
+
+			if (idOriginOfSideEffectFromSider !=null){
+				for(String s : idOriginOfSideEffectFromSider){
+					String Atc_id=ReadStitch.stitchCompoundIDToATCID(s);
+					String originOfSideEffectName=ReadATC.getLabel(Atc_id);
+					/*ADD TO ORIGIN OF SIDE EFFECT LIST*/
+					System.out.println("idMedoc:"+s+" Atc_id :"+Atc_id+";    "+originOfSideEffectName);
+				}
 			}
 		//on gere 2 erreurs
 		}

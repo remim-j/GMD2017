@@ -10,7 +10,7 @@ public abstract  class ReadOmimOnto {
 
 	public static String CUIToClassID(String CUI) {
 
-        String csvFile = "C:/Users/user/Desktop/2A/GMD/projet/projet_2016-17/omim/omim_onto.csv";
+        String csvFile = "omim_onto.csv";
         BufferedReader br = null;
         String line ;
         String separator = ",";
@@ -23,6 +23,7 @@ public abstract  class ReadOmimOnto {
                 // Use comma as a separator
                 String[] symptom = line.split(separator);
                 String [] ID;
+
             	for(int i = 0; i < symptom.length; i++){
             		if(symptom[i].equals(CUI)){
             			ID = symptom[0].split("/");
@@ -52,7 +53,7 @@ public abstract  class ReadOmimOnto {
 
 	public static void main (String[] args){
 		long startTime = System.nanoTime();
-		String liste=CUIToClassID("C1846800");
+		String liste=CUIToClassID("C1420883");
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime);
 		System.out.println(duration/Math.pow(10,9));

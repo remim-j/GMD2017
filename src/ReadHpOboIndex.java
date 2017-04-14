@@ -21,7 +21,7 @@ import org.apache.lucene.store.FSDirectory;
 public class ReadHpOboIndex {
   
 	private ReadHpOboIndex() {
-		String indexPath = "/home/aurore/workspace/GMD/index/HpObo";
+		String indexPath = "index/HpObo";
 		String docsPath = "hp_obo_file";
 	    final Path docDir = Paths.get(docsPath);
 

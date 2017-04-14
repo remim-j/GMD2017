@@ -10,7 +10,7 @@ public class Test {
 
 	public static void main(String[] args) throws IOException, SQLException{
 
-		String ATCID;
+		/*String ATCID;
 		ReadStitch TSV = new ReadStitch();
 		ATCID = TSV.stitchCompoundIDToATCID("CID00003393");
 		System.out.println(ATCID);
