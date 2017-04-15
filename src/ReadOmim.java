@@ -31,6 +31,7 @@ public abstract class ReadOmim {
 	
 	private static String index = "index/Omim";
 	private static ArrayList<String> symptomTI = new ArrayList<String>();
+	private static ArrayList<String> symptomNO = new ArrayList<String>();
 
 	private static void ReadOmim(String field, String queryString) throws IOException, ParseException {
 		
@@ -51,17 +52,22 @@ public abstract class ReadOmim {
 	    //System.out.println(numTotalHits + " total matching documents"); // to delete later
 	    
 	    symptomTI = new ArrayList<String>();
+	    symptomNO = new ArrayList<String>();
 	    if(numTotalHits!=0){
 		    hits = searcher.search(query, numTotalHits).scoreDocs;
 
 	    }
-	    String TI = "", name = "";
+	    String TI = "", NO = "";
 	    for (int i = 0; i < numTotalHits; i++) {
 	    	Document doc = searcher.doc(hits[i].doc);
 	    	if (doc.get("TI") != null) {
 	    		TI = doc.get("TI");
 	    	}
 	    	symptomTI.add(TI);
+	    	if (doc.get("NO") != null) {
+	    		NO = doc.get("NO");
+	    	}
+	    	symptomNO.add(NO);
 	    	//System.out.println(TI); // to delete later
 	    }
 		reader.close();
@@ -73,6 +79,10 @@ public abstract class ReadOmim {
 		return symptomTI;
 	}
 
+	public static ArrayList<String> getNO(String field, String query) throws IOException, ParseException {
+		ReadOmim(field, query);
+		return symptomNO;
+	}
 	
 	// to delete later
 	public static void main(String[] args) throws Exception {
@@ -82,6 +92,10 @@ public abstract class ReadOmim {
 		System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		long startTime = System.nanoTime();
 		ArrayList<String> output = getTI(field, query);
+		for (String out : output) {
+			System.out.println(out);
+		}
+		output = getNO(field,query);
 		for (String out : output) {
 			System.out.println(out);
 		}
@@ -98,3 +112,4 @@ public abstract class ReadOmim {
 	}
 	
 }
+

@@ -90,12 +90,12 @@ public class ReadOminIndex {
 					}
 				}
 				
-				// indexer NO
+				// indexer and stocker NO
 				if (line.startsWith("*FIELD* NO")) {
 					no = br.readLine();
-					doc.add(new TextField("NO", no, Field.Store.NO));
+					doc.add(new TextField("NO", no, Field.Store.YES));
 					//System.out.println("NO "+ no); // to delete later
-				}  
+				}
 	      }
 
 		} catch (Exception e){
@@ -111,3 +111,4 @@ public class ReadOminIndex {
 		System.out.println("\nTime needed for indexing Omim : "+duration/Math.pow(10,9));
 	}
 }
+
