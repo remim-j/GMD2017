@@ -7,11 +7,11 @@ public abstract  class ReadOmimOnto {
 
 	/* Take a string like "Cxxxxxxx" and return ArrayList<String> of Preferred Labels and Synonyms like ["Cataract, BLABLA","Blabla, adfksmldfk"] */
 
-	public static String ClasIDToCUI(String ClassID) {
+	public static String ClassIDToCUI(String ClassID) {
 
-        String csvFile = "omim_onto.csv";
+        String csvFile = "C:/Users/user/Desktop/2A/GMD/projet/projet_2016-17/omim/omim_onto.csv";
         BufferedReader br = null;
-        String line ;
+        String line = "";
         String separator = ",";
 
         try {
@@ -22,9 +22,10 @@ public abstract  class ReadOmimOnto {
                 // Use comma as a separator
                 String[] symptom = line.split(separator);
                 String [] ID = symptom[0].split("/");
-		if(ID[ID.length-1].equals(ClassID){  //If the IDs are the same
-			return symptom[symptom.length-1];
-		}
+                if(ID[ID.length-1].equals(ClassID)){  //If the IDs are the same
+                	System.out.println(symptom[symptom.length-2]);
+                	return symptom[symptom.length-2];
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -41,6 +42,7 @@ public abstract  class ReadOmimOnto {
         }
         return null; //No matching ClassID found
     }
+
 	
 	
 	public static String CUIToClassID(String CUI) {
