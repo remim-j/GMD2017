@@ -7,7 +7,42 @@ public abstract  class ReadOmimOnto {
 
 	/* Take a string like "Cxxxxxxx" and return ArrayList<String> of Preferred Labels and Synonyms like ["Cataract, BLABLA","Blabla, adfksmldfk"] */
 
+	public static String ClasIDToCUI(String ClassID) {
 
+        String csvFile = "omim_onto.csv";
+        BufferedReader br = null;
+        String line ;
+        String separator = ",";
+
+        try {
+
+            br = new BufferedReader(new FileReader(csvFile));
+            while ((line = br.readLine()) != null) {
+
+                // Use comma as a separator
+                String[] symptom = line.split(separator);
+                String [] ID = symptom[0].split("/");
+		if(ID[ID.length-1].equals(ClassID){  //If the IDs are the same
+			return symptom[symptom.length-1];
+		}
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null; //No matching ClassID found
+    }
+	
+	
 	public static String CUIToClassID(String CUI) {
 
         String csvFile = "omim_onto.csv";
