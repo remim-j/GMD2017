@@ -1,13 +1,14 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 
 public class GlobalClass {
 
-static ArrayList<String> provokedDiseases=new ArrayList<String>();	
+static HashMap<String,Integer> provokedDiseases=new HashMap<String,Integer>();	
 static ArrayList<String> originOfSideEffect=new ArrayList<String>();	
-static ArrayList<String> usefulMedecine=new ArrayList<String>();	
+static HashMap<String,Integer>  usefulMedecine=new HashMap<String,Integer>();	
 static ArrayList<String> suggestedEntry=new ArrayList<String>();
 
 
@@ -16,8 +17,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	public static void doSearch(String userInput){
 		try {
 			
-			/*first we start with bases wich link with the entry*/
-			ArrayList<String> stitchIdFromSider=AccesSider.stitchCompoundIdToCure(userInput);
+			/*first we start with bases which link with the entry*/
+			ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
 			ArrayList<String> cuiFromSider=AccesSider.cuiToCure(userInput);
 			ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign(userInput);
 			ArrayList<String> diseaseFromOmim=ReadOmim.getTI("CS",userInput);
@@ -25,12 +26,15 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			ArrayList<String> diseaseNameFromOrpha=AccesOrphaDataBase.GetDeseaseByClinicalSign(userInput);
 			ArrayList<String> idOriginOfSideEffectFromSider=AccesSider.idMedocCauseEffetSecondaire(userInput);
 			
+			ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI(userInput);
+			
+			
 
 			/*test if we find the each list is empty or not
 			 * 
 			 */
 			if (cuiFromSider==null && diseaseIdFromOrpha==null && diseaseFromOmim==null && symptomIdFromHpObo==null){
-				/*faire suggestions*/
+				/*make a suggestion*/
 			}
 			
 			
@@ -39,7 +43,24 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 				for (String s:stitchIdFromSider){
 					String Atc_id=ReadStitch.stitchCompoundIDToATCID(s);
 					String drugName=ReadATC.getLabel(Atc_id);
-					usefulMedecine.add(drugName);
+					addMedecine(drugName);
+				}
+			}
+			
+			/*we take cui from Omim_onto , take them to sider in order to find 
+			 * medine 
+			 * and later sideEffect
+			 */
+			if (cuiMedecineOmimOnto!=null){
+				for (String s:cuiMedecineOmimOnto){
+					ArrayList<String> stitchId=AccesSider.getStitchIdByCUI(s, "name");
+					if (stitchId!=null){
+						for (String s1:stitchId){
+							String label=ReadStitch.getATCNameByStitchID(s1);
+							addMedecine(label);
+						}
+					}
+					
 				}
 			}
 
@@ -52,10 +73,10 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 						ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(classId);
 						
 						for (String s1:diseaseLabelFromOmim){
-							provokedDiseases.add(s1);
+							addDisease(s1);
 						}
 						for (String s2:diseaseLabelFromHpoAnnot){
-							provokedDiseases.add(s2);
+							addDisease(s2);
 						}
 					}
 			
@@ -68,7 +89,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 					//System.out.println(s);
 					ArrayList<String> diseaseLabelFromHpoAnnotation=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
 					for (String s2 : diseaseLabelFromHpoAnnotation){
-						provokedDiseases.add(s2);
+						addDisease(s2);
 					}
 				}
 			}
@@ -79,7 +100,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 				for (String s : symptomIdFromHpObo){
 					ArrayList<String> diseaseLabel=ReadHpoAnnotations.getDiseaseLabelBySignId(s);
 					for(String s1:diseaseLabel){
-						provokedDiseases.add(s1);
+						addDisease(s1);
 					}
 				}
 			}
@@ -87,7 +108,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			
 			if (diseaseNameFromOrpha !=null){
 				for (String s : diseaseNameFromOrpha){
-					provokedDiseases.add(s);
+					addDisease(s);
 				}
 				
 			}
@@ -103,7 +124,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			
 			if (diseaseFromOmim!=null){
 				for(String s:diseaseFromOmim){
-					provokedDiseases.add(s);
+					addDisease(s);
 				}
 			}
 			
@@ -121,16 +142,17 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		
 		if (provokedDiseases.size()!=0){
 			System.out.println("*****provoked diseases****");
-			for(String s:provokedDiseases){
-				System.out.println(s);
+			for(String s:provokedDiseases.keySet()){
+				System.out.println(s +" : "+provokedDiseases.get(s));
 			}
 			System.out.println("\n");
 		}
 		
 		if(usefulMedecine.size()!=0){
 			System.out.println("*****useful Medecines****");
-			for(String s:usefulMedecine){
-				System.out.println(s);
+			for(String s:usefulMedecine.keySet()){
+				System.out.println(s +" : "+usefulMedecine.get(s));
+
 			}
 			System.out.println("\n");
 		}
@@ -161,6 +183,33 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		 originOfSideEffect.clear();
 		 usefulMedecine.clear();
 		  suggestedEntry.clear();
+	}
+	
+	public static void addDisease(String s){
+		if (!provokedDiseases.containsKey(s)){
+			provokedDiseases.put(s,1);
+		}
+		else{
+			int oldNum=provokedDiseases.get(s);
+			provokedDiseases.put(s,oldNum+1);
+
+		}
+		
+	}
+	
+	public static void addMedecine(String s){
+		if(s!=null){
+			if (!usefulMedecine.containsKey(s)){
+				usefulMedecine.put(s,1);
+			}
+			else{
+				int oldNum=usefulMedecine.get(s);
+				usefulMedecine.put(s,oldNum+1);
+
+			}
+		}
+		
+		
 	}
 	public static void main(String[] args){
 		String userInput="";

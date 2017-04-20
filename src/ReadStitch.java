@@ -89,6 +89,12 @@ public abstract class ReadStitch /*implements Closeable*/{
     	return alias;
     }
 
+    /* function which convert a stitchID to a medecine Label*/ 
+    public static String getATCNameByStitchID(String stitchID){
+		String Atc_id=ReadStitch.stitchCompoundIDToATCID(stitchID);
+		String drugName=ReadATC.getLabel(Atc_id);
+		return drugName;
+	}
     
     public void close() throws IOException {
     	in.close();

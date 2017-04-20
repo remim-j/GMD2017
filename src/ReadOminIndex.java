@@ -82,13 +82,28 @@ public class ReadOminIndex {
 					//System.out.println("TI "+ temp); // to delete later
 				}
 				
-				// indexer CS
+				// indexer CS and stock CS
+				
 				if (line.startsWith("*FIELD* CS")) {
-					while (!((line = br.readLine()).startsWith("*FIELD*"))) {
-						doc.add(new TextField("CS", line, Field.Store.NO));
-						//System.out.println("CS "+ line); // to delete later
+					String buff="";
+					line=br.readLine();
+					while (!(line.contains("*FIELD*"))){
+						
+						if(line.endsWith(":") && buff.equals("")==false){
+							buff=buff+";";
+						}
+						else if(!line.contains(":") && !line.trim().equals("")){
+							line=line.trim();
+							
+							buff=buff+line;
+
+						}
+						line=br.readLine();	
 					}
+					//System.out.println("buf "+buff);
+					doc.add(new TextField("CS", buff, Field.Store.YES));
 				}
+				
 				
 				// indexer and stocker NO
 				if (line.startsWith("*FIELD* NO")) {

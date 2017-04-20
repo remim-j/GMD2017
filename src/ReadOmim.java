@@ -32,6 +32,8 @@ public abstract class ReadOmim {
 	private static String index = "index/Omim";
 	private static ArrayList<String> symptomTI = new ArrayList<String>();
 	private static ArrayList<String> symptomNO = new ArrayList<String>();
+	private static ArrayList<String> symptomCS = new ArrayList<String>();
+
 
 	private static void ReadOmim(String field, String queryString) throws IOException, ParseException {
 		
@@ -53,11 +55,12 @@ public abstract class ReadOmim {
 	    
 	    symptomTI = new ArrayList<String>();
 	    symptomNO = new ArrayList<String>();
+	    symptomCS = new ArrayList<String>();
 	    if(numTotalHits!=0){
 		    hits = searcher.search(query, numTotalHits).scoreDocs;
 
 	    }
-	    String TI = "", NO = "";
+	    String TI = "", NO = "",CS="";
 	    for (int i = 0; i < numTotalHits; i++) {
 	    	Document doc = searcher.doc(hits[i].doc);
 	    	if (doc.get("TI") != null) {
@@ -68,7 +71,18 @@ public abstract class ReadOmim {
 	    		NO = doc.get("NO");
 	    	}
 	    	symptomNO.add(NO);
-	    	//System.out.println(TI); // to delete later
+	    	
+	    	if (doc.get("CS")!=null){
+	    		CS=doc.get("CS");
+	    		String[] tab=CS.split(";");
+	    		for (int iprime=0;iprime<tab.length;iprime++){
+	    			symptomCS.add(tab[iprime]);
+	    		}
+	    		
+	    		
+	    	}
+	    	
+	    	
 	    }
 		reader.close();
 	}
@@ -84,31 +98,38 @@ public abstract class ReadOmim {
 		return symptomNO;
 	}
 	
+	public static ArrayList<String> getCS(String field, String query) throws IOException, ParseException {
+		ReadOmim(field, query);
+		return symptomCS;
+	}
+ 
+	
 	// to delete later
 	public static void main(String[] args) throws Exception {
-		System.out.println("Examples Omim :");
+		//System.out.println("Examples Omim :");
 		String field = "CS";
 		String query = "Hyperreflexia of m";
-		System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
+		//System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		long startTime = System.nanoTime();
-		ArrayList<String> output = getTI(field, query);
+		ArrayList<String> output ;
+		/*output= getTI(field, query);
 		for (String out : output) {
-			System.out.println(out);
+			//System.out.println(out);
 		}
 		output = getNO(field,query);
 		for (String out : output) {
-			System.out.println(out);
+			//System.out.println(out);
 		}
 		long endTime = System.nanoTime();
-		long duration = (endTime - startTime);
+		long duration = (endTime - startTime);*/
 		field = "NO";
 		query = "100050";
 		System.out.println("\nInput \""+query+"\" on field \""+field+"\" corresponds to output : \n");
-		output = getTI(field, query);
+		output = getCS(field, query);
 		for (String out : output) {
 			System.out.println(out);
 		}
-		System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
+		//System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
 	}
 	
 }

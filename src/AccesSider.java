@@ -47,7 +47,7 @@ public abstract class AccesSider {
 		return listeIdMedicaments;
 	}
 	
-public static ArrayList<String> stitchCompoundIdToCure(String concept_name) throws Exception{
+public static ArrayList<String> getStitchIDByConceptName(String concept_name) throws Exception{
 		
 		//activer la connexion
 		Class.forName(DRIVER);
@@ -111,6 +111,45 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	return listeCui;
 }
 
+public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws Exception{
+	
+	//activer la connexion
+			Class.forName(DRIVER);
+			Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+			
+			//Requette SQL
+			String myQuery="SELECT * "+
+					" FROM meddra_all_indications "+
+					" Where cui = ?  OR CUI_of_meddra_term = ?; ";
+			PreparedStatement st=con.prepareStatement(myQuery);
+			st.setString(1,(cui)); 
+			st.setString(2,(cui));
+
+			ResultSet res=st.executeQuery();
+			
+			ArrayList<String> listeIdMedicaments=new ArrayList<String>();
+			while (res.next()){
+				String stitch_id =res.getString("stitch_compound_id");
+				
+				
+				if (!listeIdMedicaments.contains(stitch_id)){
+					listeIdMedicaments.add(stitch_id);
+				}
+			
+			}
+			res.close();
+			st.close();
+			con.close();
+			if (listeIdMedicaments.size()!=0){
+				return listeIdMedicaments;
+
+			}
+			return null;
+}
+
+
+	
+
 	
 	public static void main(String[] args){
 		try{
@@ -118,14 +157,15 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 			for (String s : liste){
 				System.out.println(s.toString());
 			}*/
-			ArrayList<String> idOriginOfSideEffectFromSider=AccesSider.idMedocCauseEffetSecondaire("Failure to thrive");
+			ArrayList<String> idStitch=AccesSider.getStitchIdByCUI("C0393808","name");
 
-			if (idOriginOfSideEffectFromSider !=null){
-				for(String s : idOriginOfSideEffectFromSider){
-					String Atc_id=ReadStitch.stitchCompoundIDToATCID(s);
-					String originOfSideEffectName=ReadATC.getLabel(Atc_id);
+			if (idStitch !=null){
+			
+				for(String s : idStitch){
+					System.out.println(s);
+					String label=ReadStitch.getATCNameByStitchID(s);
 					/*ADD TO ORIGIN OF SIDE EFFECT LIST*/
-					System.out.println("idMedoc:"+s+" Atc_id :"+Atc_id+";    "+originOfSideEffectName);
+					System.out.println("idMedoc:"+s);
 				}
 			}
 		//on gere 2 erreurs
@@ -155,6 +195,7 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 		}
 	
 	}
+	
 	
 
 }
