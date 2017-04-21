@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class GlobalClass {
 
 static HashMap<String,Integer> provokedDiseases=new HashMap<String,Integer>();	
-static ArrayList<String> originOfSideEffect=new ArrayList<String>();	
+static HashMap<String,Integer> originOfSideEffect=new  HashMap<String,Integer>();	
 static HashMap<String,Integer>  usefulMedecine=new HashMap<String,Integer>();	
 static ArrayList<String> suggestedEntry=new ArrayList<String>();
 
@@ -15,6 +15,10 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	static Scanner sc=  new Scanner(System.in);;
 
 	public static void doSearch(String userInput){
+		
+		/*inialize BD*/
+		
+		AccesSider.InitSider();
 		try {
 			
 			/*first we start with bases which link with the entry*/
@@ -58,6 +62,13 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 						for (String s1:stitchId){
 							String label=ReadStitch.getATCNameByStitchID(s1);
 							addMedecine(label);
+						}
+					}
+					ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
+					if (sideEffectStitchID !=null){
+						for (String s1:sideEffectStitchID){
+							String label=ReadStitch.getATCNameByStitchID(s1);
+							addOriginSideEffect(label);
 						}
 					}
 					
@@ -117,7 +128,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 				for(String s : idOriginOfSideEffectFromSider){
 					String Atc_id=ReadStitch.stitchCompoundIDToATCID(s);
 					String originOfSideEffectName=ReadATC.getLabel(Atc_id);
-					originOfSideEffect.add(originOfSideEffectName);
+					addOriginSideEffect(originOfSideEffectName);
 					/*ADD TO ORIGIN OF SIDE EFFECT LIST*/
 				}
 			}
@@ -159,8 +170,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		
 		if (originOfSideEffect.size()!=0){
 			System.out.println("*****origin of possible SideEffect****");
-			for(String s:originOfSideEffect){
-				System.out.println(s);
+			for(String s:originOfSideEffect.keySet()){
+				System.out.println(s +" : "+originOfSideEffect.get(s));
 			}
 			System.out.println("\n");
 
@@ -209,7 +220,19 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			}
 		}
 		
-		
+	}
+	
+	public static void addOriginSideEffect(String s){
+		if(s!=null){
+			if (!originOfSideEffect.containsKey(s)){
+				originOfSideEffect.put(s,1);
+			}
+			else{
+				int oldNum=originOfSideEffect.get(s);
+				originOfSideEffect.put(s,oldNum+1);
+
+			}
+		}
 	}
 	public static void main(String[] args){
 		String userInput="";
@@ -222,9 +245,13 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	                System.out.print(":> ");
 	                userInput = sc.nextLine();
 	                try{
+	                	long startTime = System.nanoTime();
 	                	doSearch(userInput);
 		                showResult();
 		               clearList();
+		               long endTime = System.nanoTime();
+		       		double duration = (endTime - startTime)/Math.pow(10,9);
+		       		System.out.println("\n Time needed : "+duration);
 		        		System.out.println("Entrer votre requette" +"|"+" q pour sortir");
 	        		}catch (Exception e){
 	        			System.out.println(e);

@@ -9,22 +9,50 @@ public abstract class AccesSider {
 	static String DRIVER="com.mysql.jdbc.Driver";
 	static String USER_NAME="gmd-read";
 	static String USER_PSWD="esial";
-	public AccesSider() {
+	
+	
+	 /*data to initialize sider*/
+	static Connection con;
+	
+	public static void  InitSider() {
 		// TODO Auto-generated constructor stub	
+		
+		try {
+			
+			Class.forName(DRIVER);
+			con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void closeSider(){
+		try {
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public static ArrayList<String> idMedocCauseEffetSecondaire(String side_effect) throws Exception{
 		
 		//activer la connexion
-		Class.forName(DRIVER);
-		Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		//Class.forName(DRIVER);
+		//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		
 		
 		//Requette SQL
 		String myQuery="SELECT * "+
 				" FROM meddra_all_se "+
-				" Where lower(side_effect_name) = ? ; ";
+				" Where lower(side_effect_name) LIKE ? ; ";
 		PreparedStatement st=con.prepareStatement(myQuery);
-		st.setString(1,(side_effect).toLowerCase()); //I take all diseases which contains the word
+		st.setString(1,"%"+(side_effect).toLowerCase()+"%"); //I take all diseases which contains the word
 		ResultSet res=st.executeQuery();
 		
 		ArrayList<String> listeIdMedicaments=new ArrayList<String>();
@@ -42,7 +70,7 @@ public abstract class AccesSider {
 		}
 		res.close();
 		st.close();
-		con.close();
+		//con.close();
 		
 		return listeIdMedicaments;
 	}
@@ -50,15 +78,15 @@ public abstract class AccesSider {
 public static ArrayList<String> getStitchIDByConceptName(String concept_name) throws Exception{
 		
 		//activer la connexion
-		Class.forName(DRIVER);
-		Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		//Class.forName(DRIVER);
+		//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 		
 		//Requette SQL
 		String myQuery="SELECT * "+
 				" FROM meddra_all_indications "+
-				" Where lower(concept_name)= ? ; ";
+				" Where lower(concept_name) LIKE ? ; ";
 		PreparedStatement st=con.prepareStatement(myQuery);
-		st.setString(1,(concept_name).toLowerCase()); //I take all diseases which contains the word
+		st.setString(1,"%"+(concept_name).toLowerCase()+"%"); //I take all diseases which contains the word
 		ResultSet res=st.executeQuery();
 		
 		ArrayList<String> listeIdMedicaments=new ArrayList<String>();
@@ -74,7 +102,7 @@ public static ArrayList<String> getStitchIDByConceptName(String concept_name) th
 		}
 		res.close();
 		st.close();
-		con.close();
+		//con.close();
 		
 		return listeIdMedicaments;
 	}
@@ -82,15 +110,15 @@ public static ArrayList<String> getStitchIDByConceptName(String concept_name) th
 public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	
 	//activer la connexion
-	Class.forName(DRIVER);
-	Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+	//Class.forName(DRIVER);
+	//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 	
 	//Requette SQL
 	String myQuery="SELECT * "+
 			" FROM meddra_all_indications "+
-			" Where lower(concept_name)= ? ; ";
+			" Where lower(concept_name) LIKE  ? ; ";
 	PreparedStatement st=con.prepareStatement(myQuery);
-	st.setString(1,(concept_name).toLowerCase()); //I take all diseases which contains the word
+	st.setString(1,"%"+(concept_name).toLowerCase()+"%"); //I take all diseases which contains the word
 	ResultSet res=st.executeQuery();
 	
 	ArrayList<String> listeCui=new ArrayList<String>();
@@ -106,21 +134,23 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	}
 	res.close();
 	st.close();
-	con.close();
+	//con.close();
 	
 	return listeCui;
 }
 
 public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws Exception{
 	
+	/*initialize sider*/
+	InitSider();
 	//activer la connexion
-			Class.forName(DRIVER);
-			Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		//	Class.forName(DRIVER);
+			//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 			
 			//Requette SQL
 			String myQuery="SELECT * "+
 					" FROM meddra_all_indications "+
-					" Where cui = ?  OR CUI_of_meddra_term = ?; ";
+					" Where cui = ?  OR cui_of_meddra_term = ?; ";
 			PreparedStatement st=con.prepareStatement(myQuery);
 			st.setString(1,(cui)); 
 			st.setString(2,(cui));
@@ -139,7 +169,7 @@ public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws 
 			}
 			res.close();
 			st.close();
-			con.close();
+			//con.close();
 			if (listeIdMedicaments.size()!=0){
 				return listeIdMedicaments;
 
@@ -153,21 +183,35 @@ public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws 
 	
 	public static void main(String[] args){
 		try{
-			/*ArrayList<String> liste=cuiToCure("Failure");//
+			 long startTime = System.nanoTime();
+			 InitSider();
+			ArrayList<String> liste=cuiToCure("Failure");
+			long endTime = System.nanoTime();
+       		double duration = (endTime - startTime)/Math.pow(10,9);
+       		System.out.println("\n Time needed : "+duration);
 			for (String s : liste){
 				System.out.println(s.toString());
-			}*/
-			ArrayList<String> idStitch=AccesSider.getStitchIdByCUI("C0393808","name");
+			}
+			 
+			ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI("Cancer");
 
-			if (idStitch !=null){
-			
-				for(String s : idStitch){
-					System.out.println(s);
-					String label=ReadStitch.getATCNameByStitchID(s);
-					/*ADD TO ORIGIN OF SIDE EFFECT LIST*/
-					System.out.println("idMedoc:"+s);
+			for (String s:cuiMedecineOmimOnto){
+				/*ArrayList<String> stitchId=AccesSider.getStitchIdByCUI(s, "name");
+				if (stitchId!=null){
+					for (String s1:stitchId){
+						String label=ReadStitch.getATCNameByStitchID(s1);
+						addMedecine(label);
+					}
+				}*/
+				ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
+				if (sideEffectStitchID !=null){
+					for (String s1:sideEffectStitchID){
+						String label=ReadStitch.getATCNameByStitchID(s1);
+						System.out.println(label);
+					}
 				}
 			}
+				
 		//on gere 2 erreurs
 		}
 		catch(ClassNotFoundException e){

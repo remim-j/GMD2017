@@ -182,10 +182,11 @@ public abstract  class ReadOmimOnto {
 		long startTime = System.nanoTime();
 		String liste=CUIToClassID("C1867385");
 		ArrayList<String> liste2=ClassIDToCUI("302800");
-		ArrayList<String> liste3=SymptomToCUI("cancer");
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime);
 		System.out.println(duration/Math.pow(10,9));
+		ArrayList<String> liste3=SymptomToCUI("cancer");
+		
 		//System.out.println(liste);
 		ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI("cancer");
 

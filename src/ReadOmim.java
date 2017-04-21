@@ -119,9 +119,9 @@ public abstract class ReadOmim {
 		output = getNO(field,query);
 		for (String out : output) {
 			//System.out.println(out);
-		}
+		}*/
 		long endTime = System.nanoTime();
-		long duration = (endTime - startTime);*/
+		long duration = (endTime - startTime);
 		field = "NO";
 		query = "100050";
 		System.out.println("\nInput \""+query+"\" on field \""+field+"\" corresponds to output : \n");
@@ -129,7 +129,7 @@ public abstract class ReadOmim {
 		for (String out : output) {
 			System.out.println(out);
 		}
-		//System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
+		System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
 	}
 	
 }
