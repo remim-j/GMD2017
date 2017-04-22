@@ -30,7 +30,7 @@ public abstract class AccesSider {
 		}
 	}
 	
-	public void closeSider(){
+	public static void closeSider(){
 		try {
 			con.close();
 		} catch (SQLException e) {
@@ -51,6 +51,7 @@ public abstract class AccesSider {
 		String myQuery="SELECT * "+
 				" FROM meddra_all_se "+
 				" Where lower(side_effect_name) LIKE ? ; ";
+		//System.out.println(myQuery);
 		PreparedStatement st=con.prepareStatement(myQuery);
 		st.setString(1,"%"+(side_effect).toLowerCase()+"%"); //I take all diseases which contains the word
 		ResultSet res=st.executeQuery();
@@ -142,9 +143,9 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws Exception{
 	
 	/*initialize sider*/
-	InitSider();
+	//InitSider();
 	//activer la connexion
-		//	Class.forName(DRIVER);
+			//Class.forName(DRIVER);
 			//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 			
 			//Requette SQL
@@ -183,6 +184,7 @@ public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws 
 	
 	public static void main(String[] args){
 		try{
+			InitSider();
 			 long startTime = System.nanoTime();
 			 InitSider();
 			ArrayList<String> liste=cuiToCure("Failure");

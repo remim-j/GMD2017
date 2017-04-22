@@ -1,7 +1,17 @@
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.lucene.queryparser.classic.ParseException;
 
 
 public class GlobalClass {
@@ -11,17 +21,30 @@ static HashMap<String,Integer> originOfSideEffect=new  HashMap<String,Integer>()
 static HashMap<String,Integer>  usefulMedecine=new HashMap<String,Integer>();	
 static ArrayList<String> suggestedEntry=new ArrayList<String>();
 
-
+	
 	static Scanner sc=  new Scanner(System.in);;
+	private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 
 	public static void doSearch(String userInput){
 		
-		/*inialize BD*/
 		
-		AccesSider.InitSider();
+		Long startTime=(long) (System.nanoTime());
 		try {
 			
+			/*********inialize BD***********/
+			
+			AccesSider.InitSider();
+			ReadHpoAnnotations.connect();
+			
+					/***********/
+			
+			
+			
+			Long startTime1= (System.nanoTime());
+
+			
 			/*first we start with bases which link with the entry*/
+			 
 			ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
 			ArrayList<String> cuiFromSider=AccesSider.cuiToCure(userInput);
 			ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign(userInput);
@@ -33,67 +56,186 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI(userInput);
 			
 			
+			long secondTime = System.nanoTime();
+       		double durationT = (startTime1 - secondTime)/Math.pow(10,9);
+       		System.out.println("temps a verifier "+durationT);
 
-			/*test if we find the each list is empty or not
-			 * 
-			 */
-			if (cuiFromSider==null && diseaseIdFromOrpha==null && diseaseFromOmim==null && symptomIdFromHpObo==null){
-				/*make a suggestion*/
-			}
+
+			/*we create a thread which will do this task*/
+			ExecutorService executorService1 = Executors.newFixedThreadPool(NUM_CORES);
+			  List<Future<?>> first_futures  = new LinkedList<Future<?>>();
+
+			Future future1 = executorService1.submit(new Runnable() {
+			    public void run() {
+			     //   System.out.println("Asynchronous task 2");
+			        if (idOriginOfSideEffectFromSider !=null){
+						//for(String s : idOriginOfSideEffectFromSider){
+							
+							  ExecutorService executorService1_1 = Executors.newFixedThreadPool(NUM_CORES);
+							  //List<Future<?>> first_futures  = new LinkedList<Future<?>>();
+								    for(String s : idOriginOfSideEffectFromSider){
+										Future future11 = executorService1_1.submit(new Runnable() {
+							 				public void run() {
+							 					String originOfSideEffectName=ReadStitch.getATCNameByStitchID(s);
+												addOriginSideEffect(originOfSideEffectName);
+							 				 }});
+							 				first_futures.add(future11);
+
+									}
+									/*for (Future<?> f : first_futures)
+										    {
+										        try   { f.get(); }
+										        catch (InterruptedException e) { } 
+										        catch (ExecutionException   e) { }         
+										    }
+											
+											
+									executorService1.shutdown();*/    
+						
+						
+					}
+			    }
+			});
+       		
+       		
+	       		ExecutorService executorService2 = Executors.newFixedThreadPool(NUM_CORES);
+	       		Future future2 = executorService2.submit(new Runnable() {
+				    public void run() {
+				    	if (stitchIdFromSider !=null){
+							for (String s:stitchIdFromSider){
+								String drugName=ReadStitch.getATCNameByStitchID(s);
+								addMedecine(drugName);
+							}
+						
+				        
+				    }
+				    }
+				});
+       		
+       		
 			
 			
 			
-			if (stitchIdFromSider !=null){
-				for (String s:stitchIdFromSider){
-					String Atc_id=ReadStitch.stitchCompoundIDToATCID(s);
-					String drugName=ReadATC.getLabel(Atc_id);
-					addMedecine(drugName);
-				}
-			}
-			
+			 
 			/*we take cui from Omim_onto , take them to sider in order to find 
 			 * medine 
-			 * and later sideEffect
+			 * and  sideEffect
 			 */
-			if (cuiMedecineOmimOnto!=null){
-				for (String s:cuiMedecineOmimOnto){
-					ArrayList<String> stitchId=AccesSider.getStitchIdByCUI(s, "name");
-					if (stitchId!=null){
-						for (String s1:stitchId){
-							String label=ReadStitch.getATCNameByStitchID(s1);
-							addMedecine(label);
-						}
-					}
-					ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
-					if (sideEffectStitchID !=null){
-						for (String s1:sideEffectStitchID){
-							String label=ReadStitch.getATCNameByStitchID(s1);
-							addOriginSideEffect(label);
-						}
-					}
-					
-				}
-			}
+	       	
+       		/*ExecutorService executorService3 = Executors.newFixedThreadPool(NUM_CORES);;
+       		Future future3 = executorService3.submit(new Runnable() {
+			  public void run() {*/
+				  
+			    	long firstTime = System.nanoTime();
+			    	 ExecutorService executorService3 = Executors.newFixedThreadPool(NUM_CORES);
+				       List<Future<?>> futures3  = new LinkedList<Future<?>>();
+	
+	             if (cuiMedecineOmimOnto!=null){
+				//for (String s:cuiMedecineOmimOnto){ 
+						//HERE
+					// ExecutorService executorService3 = Executors.newFixedThreadPool(NUM_CORES);
+				       // List<Future<?>> futures3  = new LinkedList<Future<?>>();
+						for (String s:cuiMedecineOmimOnto){ 
 
-			
-			if (cuiFromSider!= null){
-				for (String s: cuiFromSider){
-					String classId=ReadOmimOnto.CUIToClassID(s);
-					if (classId !=null){
-						ArrayList<String> diseaseLabelFromOmim=ReadOmim.getTI("NO",classId);
-						ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(classId);
+							Future future11 = executorService3.submit(new Runnable() {
+							public void run() {
+									try{
+										ArrayList<String> stitchId=AccesSider.getStitchIdByCUI(s, "name");;
+										if (stitchId!=null){
+											 ExecutorService executorService111 = Executors.newFixedThreadPool(1);
+										     
+											for (String s1:stitchId){
+												Future future111 = executorService111.submit(new Runnable() {
+													public void run() {
+														String label=ReadStitch.getATCNameByStitchID(s1);
+														addMedecine(label);
+											
+												}});
+												//futures111.add(future111);
+											}
+											
+											
+										}
+										ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
+										if (sideEffectStitchID !=null){
+											 ExecutorService executorService112 = Executors.newFixedThreadPool(1);
+											for (String s1:sideEffectStitchID){
+												executorService112.submit(new Runnable() {
+													public void run() {
+														String label=ReadStitch.getATCNameByStitchID(s1);
+														addOriginSideEffect(label);
+											
+												}});
+												
+											}
+									
+								}
+		 					}catch(Exception ex){
+		 						System.err.println("autre erreur");
+		 						while (ex!=null){
+		 							System.err.println("Error msg: "+ex.getMessage());
+		 							ex.printStackTrace();			
+		 						}
+		 					}
+		 					
 						
-						for (String s1:diseaseLabelFromOmim){
-							addDisease(s1);
-						}
-						for (String s2:diseaseLabelFromHpoAnnot){
-							addDisease(s2);
-						}
-					}
-			
-				}
-			}
+		 				 }});
+		 				futures3.add(future11);
 
+				}
+						
+						  
+				long secondTimeT = System.nanoTime();
+	       		double durationT1 = (firstTime - secondTime)/Math.pow(10,9);
+	       		//System.out.println("duration T "+durationT1);
+	             }
+	             
+			    //}
+			//});
+       		
+      
+			
+			
+
+       		ExecutorService executorService4 = Executors.newFixedThreadPool(NUM_CORES);
+       		Future future4 = executorService4.submit(new Runnable() {
+			    public void run() {
+			    	if (cuiFromSider!= null){
+			    		try {
+			    			for (String s: cuiFromSider){
+			    				
+								String classId=ReadOmimOnto.CUIToClassID(s);
+								if (classId !=null){
+									ArrayList<String> diseaseLabelFromOmim=ReadOmim.getTI("NO",classId);
+									ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(classId);
+									
+									for (String s1:diseaseLabelFromOmim){
+										addDisease(s1);
+									}
+									for (String s2:diseaseLabelFromHpoAnnot){
+										addDisease(s2);
+									}
+								}
+						
+							}
+			    			
+					} catch (IOException | ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    	 catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+					}
+			    		
+			    }
+			    	
+		       		
+			}});
+			
+			
+
+			
 			if (diseaseIdFromOrpha != null){
 				/*We follow the mapping*/
 				for (String s:diseaseIdFromOrpha ){
@@ -107,6 +249,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			
 				
 			
+
 			if (symptomIdFromHpObo !=null){				
 				for (String s : symptomIdFromHpObo){
 					ArrayList<String> diseaseLabel=ReadHpoAnnotations.getDiseaseLabelBySignId(s);
@@ -124,15 +267,6 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 				
 			}
 			
-			if (idOriginOfSideEffectFromSider !=null){
-				for(String s : idOriginOfSideEffectFromSider){
-					String Atc_id=ReadStitch.stitchCompoundIDToATCID(s);
-					String originOfSideEffectName=ReadATC.getLabel(Atc_id);
-					addOriginSideEffect(originOfSideEffectName);
-					/*ADD TO ORIGIN OF SIDE EFFECT LIST*/
-				}
-			}
-			
 			if (diseaseFromOmim!=null){
 				for(String s:diseaseFromOmim){
 					addDisease(s);
@@ -141,13 +275,47 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			
 			
 			
+			
+			long first = System.nanoTime();
+
+			for (Future<?> f : first_futures)
+		    {
+		        try   { f.get(); }
+		        catch (InterruptedException e) { } 
+		        catch (ExecutionException   e) { }         
+		    }
+
+			
+       		//System.out.println("duration T "+durationT1);
+			for (Future<?> f : futures3)
+		    {
+		        try   { f.get(); }
+		        catch (InterruptedException e) { } 
+		        catch (ExecutionException   e) { }         
+		    }
+			
+			long second = System.nanoTime();
+       		double dur = (first - second)/Math.pow(10,9);
+       		System.out.println("duration T "+dur);
+	while ( !future2.isDone()   || !future4.isDone() || !future1.isDone()){};
+	
+	
+	executorService1.shutdown();  
+	executorService2.shutdown(); 
+	executorService3.shutdown(); 
+	executorService4.shutdown(); 
+
+	
+	
+	AccesSider.closeSider();
+	ReadHpoAnnotations.disconnect();
 	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
 	}
+		
 	
 	public static void showResult(){
 		
@@ -196,7 +364,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		  suggestedEntry.clear();
 	}
 	
-	public static void addDisease(String s){
+	public static  void addDisease(String s){
 		if (!provokedDiseases.containsKey(s)){
 			provokedDiseases.put(s,1);
 		}
@@ -208,7 +376,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		
 	}
 	
-	public static void addMedecine(String s){
+	public static  void addMedecine(String s){
 		if(s!=null){
 			if (!usefulMedecine.containsKey(s)){
 				usefulMedecine.put(s,1);
@@ -222,7 +390,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		
 	}
 	
-	public static void addOriginSideEffect(String s){
+	public static  void addOriginSideEffect(String s){
 		if(s!=null){
 			if (!originOfSideEffect.containsKey(s)){
 				originOfSideEffect.put(s,1);

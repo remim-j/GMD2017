@@ -64,7 +64,7 @@ public abstract class ReadHpoAnnotations{
      *
      */
 
-	public boolean disconnect (){
+	public static boolean disconnect (){
 
 		try{
 			if(connection != null){
@@ -115,10 +115,10 @@ public abstract class ReadHpoAnnotations{
 		connect();
 		String myQuery="SELECT disease_label "
 						+ "FROM phenotype_annotation "
-						+ "WHERE disease_id = ? ;";
+						+ "WHERE disease_id LIKE ? ;";
 		statement =connection.prepareStatement(myQuery);
 		
-		statement.setString(1,deseaseID);
+		statement.setString(1,"%"+deseaseID+"%");
 		ResultSet res=statement.executeQuery();
 				
 		ArrayList<String> listeDiseaseLabel=new ArrayList<String>();
@@ -136,6 +136,7 @@ public abstract class ReadHpoAnnotations{
 	
 	
 	public static void main (String[] args){
+		
 		try {
 			/*ArrayList<String> liste=getDiseaseLabelByDiseaseId("603629");
 			for (String s : liste){

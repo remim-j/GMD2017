@@ -1,112 +1,114 @@
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
-	/**Takes args "CIDxxxxxxxxx" return a String ATC code like "XXXXXXXX"*/
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
 
-public abstract class ReadStitch /*implements Closeable*/{
 
-    
-    static String line = null;
-    static File file = new File("chemical.sources.v5.0.tsv/chemical.sources.v5.0.tsv");
-    static FileInputStream stream; 
-    static Scanner in;
-    public static void  ReadStitch() throws FileNotFoundException{
-    	stream=new FileInputStream(file);
-        in = new Scanner(stream);
+public abstract class ReadStitch {
+	
+	static String ATC_id;
+	
+	private static String index = "index/Stitch";
+private static void ReadStitchIndexBis( String queryString) throws IOException, ParseException {
+		String field="a";
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
+		IndexSearcher searcher = new IndexSearcher(reader);
+		Analyzer analyzer = new StandardAnalyzer();
+		//QueryParser parser = new QueryParser(field, analyzer);
 
-    }
+		//TermQuery parser = new TermQuery(new Term(field.toString()));
+		//Query query = parser.parse(queryString);
+		//Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
+		String[] queries={transformChemical(queryString),transformAlias(queryString)};
+		String[] fields={"compound_id_With_m","compound_id_With_s"};
+		BooleanClause.Occur[] occurs={BooleanClause.Occur.SHOULD,BooleanClause.Occur.SHOULD};
 
-    /**Constructs a new TSVReader which produces values scanned from the specified input stream.*/
+		/**to remember MultiFieldQueryParser to search on many field**/
+		Query query = MultiFieldQueryParser.parse(queries,fields,occurs, analyzer);
+		
+		//System.out.println(query);
+		
+	    TopDocs results = searcher.search(query, 100); // hope 100 is enough :)
+	    ScoreDoc[] hits = results.scoreDocs;
+	    
+	    int numTotalHits = results.totalHits;
+	    
+	   
+	    if(numTotalHits!=0){
+		    hits = searcher.search(query, numTotalHits).scoreDocs;
 
-    public static boolean hasNextTokens(){
-
-        if(line!=null){
-        	return true;
-        }
-        if(!in.hasNextLine()){
-        	return false;
-        	}
-        String lineThis= in.nextLine().trim();
-        if(lineThis.isEmpty()) {
-        	return hasNextTokens();
-        }
-        line = lineThis;
-        return true;
-    }
-
-    /** Return the wanted ATC ID*/
-
-    public static String stitchCompoundIDToATCID(String stitchCompoundID){
-    	 try {
-			ReadStitch() ;
-			String[] token = null;
-	    	boolean fini = false;
-	    	while(hasNextTokens() && !fini){
-	   			while(token == null || token.length != 4){ //If token is not complete
-	   				token = nextTokens();
-	   			}if(token[2].equals("BindingDB")){	//If we have done with ATC id
-	   				fini = true;
-	   			}else if(token[0].equals(transformChemical(stitchCompoundID)) || token[1].equals(transformAlias(stitchCompoundID))){
-	  				return token[3];
-	   			}
-	   			token = nextTokens();
+	    }
+	    
+	    for (int i = 0; i < numTotalHits; i++) {
+	    	Document doc = searcher.doc(hits[i].doc);
+	    	if (doc.get("ATC_id") != null) {
+	    		ATC_id=doc.get("ATC_id");
+	    		break;
 	    	}
-		} catch (FileNotFoundException e) {
+	    }
+		reader.close();
+		
+	}
+	public static String transformChemical(String CID){
+		String chemical = "";
+		chemical = CID.substring(0, 3) + "m" + CID.substring(4, CID.length());
+		return chemical;
+	}
+	
+	public static String transformAlias(String CID){
+		String alias = "";
+		alias = CID.substring(0, 3) + "s" + CID.substring(4, CID.length());
+		return alias;
+	}
+	
+	public static String stitchCompoundIDToATCID(String stitchID) throws IOException, ParseException{
+		ReadStitchIndexBis(stitchID);
+		return ATC_id;
+	}
+	
+	 public static String getATCNameByStitchID(String stitchID){
+	    	try {
+				
+				String Atc_id;
+					Atc_id = ReadStitch.stitchCompoundIDToATCID(stitchID);
+					String drugName=ReadATC.getLabel(Atc_id);
+					return drugName;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	    	
+	    	return null;
+	
+		}
+	
+	public static void  main (String[] args){
+		try {
+			System.out.println(stitchCompoundIDToATCID("CID100000085"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
-    	return null;
-    }
-
-    /** Jump to the next line*/
-
-    public static String[] nextTokens(){
-
-        if(!hasNextTokens()){
-        	return null;
-        }
-        String[] tokens = line.split("[\\s\t]+");
-        line=null;
-        return tokens;
-    }
-
-    public static String transformChemical(String CID){
-    	String chemical = "";
-    	chemical = CID.substring(0, 3) + "m" + CID.substring(4, CID.length());
-    	return chemical;
-    }
-
-    public static String transformAlias(String CID){
-    	String alias = "";
-    	alias = CID.substring(0, 3) + "s" + CID.substring(4, CID.length());
-    	return alias;
-    }
-
-    /* function which convert a stitchID to a medecine Label*/ 
-    public static String getATCNameByStitchID(String stitchID){
-		String Atc_id=ReadStitch.stitchCompoundIDToATCID(stitchID);
-		String drugName=ReadATC.getLabel(Atc_id);
-		return drugName;
 	}
-    
-    public void close() throws IOException {
-    	in.close();
-    }
-    
-    public static void main(String[] args){
-    	long startTime = System.nanoTime();
-    	String ATCid=stitchCompoundIDToATCID("CID100132999");
-    	System.out.println(ATCid);
-    	long endTime = System.nanoTime();
-		long duration = (endTime - startTime);
-		System.out.println("duree :"+duration/Math.pow(10,9));
-    }
-
 }
