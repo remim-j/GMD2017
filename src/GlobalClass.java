@@ -33,48 +33,52 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			
 			/*********inialize BD***********/
 			
-			AccesSider.InitSider();
+			//AccesSider.InitSider();
 			ReadHpoAnnotations.connect();
 			
 					/***********/
 			
 			
 			
-			Long startTime1= (System.nanoTime());
+			Long initListeDebut= (System.nanoTime());
 
 			
 			/*first we start with bases which link with the entry*/
 			 
 			ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
-			ArrayList<String> cuiFromSider=AccesSider.cuiToCure(userInput);
+			/* cui from sider not very useful i am going to explain it to you at the next meeting
+			 * We can not find diseaese which have their cui in sider because  the only only link which was 
+			 * cui with omim_onto cn not be exploited (cause of MTHU).
+			 */
+			//ArrayList<String> cuiFromSider=AccesSider.cuiToCure(userInput);
 			ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign(userInput);
 			ArrayList<String> diseaseFromOmim=ReadOmim.getTI("CS",userInput);
+			ArrayList<String> diseaseIdFromOmim=ReadOmim.getNO("CS",userInput);
+
 			ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name",userInput);
 			ArrayList<String> diseaseNameFromOrpha=AccesOrphaDataBase.GetDeseaseByClinicalSign(userInput);
 			ArrayList<String> idOriginOfSideEffectFromSider=AccesSider.idMedocCauseEffetSecondaire(userInput);
-			
 			ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI(userInput);
 			
 			
-			long secondTime = System.nanoTime();
-       		double durationT = (startTime1 - secondTime)/Math.pow(10,9);
-       		System.out.println("temps a verifier "+durationT);
+			long initListeFin= System.nanoTime();
+       		double initListe = (-initListeDebut + initListeFin)/Math.pow(10,9);
+       		System.out.println("temps initialisation listes "+initListe);
 
 
 			/*we create a thread which will do this task*/
-			ExecutorService executorService1 = Executors.newFixedThreadPool(NUM_CORES);
-			  List<Future<?>> first_futures  = new LinkedList<Future<?>>();
+			//ExecutorService executorService1 = Executors.newFixedThreadPool(NUM_CORES);
+			ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
 
-			Future future1 = executorService1.submit(new Runnable() {
-			    public void run() {
+			  
+			List<Future<?>> first_futures  = new LinkedList<Future<?>>();
+		//Future future1 = executorService.submit(new Runnable() {
+			  //  public void run() {
 			     //   System.out.println("Asynchronous task 2");
 			        if (idOriginOfSideEffectFromSider !=null){
-						//for(String s : idOriginOfSideEffectFromSider){
-							
-							  ExecutorService executorService1_1 = Executors.newFixedThreadPool(NUM_CORES);
-							  //List<Future<?>> first_futures  = new LinkedList<Future<?>>();
+							// ExecutorService executorService1 = Executors.newFixedThreadPool(NUM_CORES);
 								    for(String s : idOriginOfSideEffectFromSider){
-										Future future11 = executorService1_1.submit(new Runnable() {
+										Future future11 = executorService.submit(new Runnable() {
 							 				public void run() {
 							 					String originOfSideEffectName=ReadStitch.getATCNameByStitchID(s);
 												addOriginSideEffect(originOfSideEffectName);
@@ -82,33 +86,45 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 							 				first_futures.add(future11);
 
 									}
-									/*for (Future<?> f : first_futures)
-										    {
-										        try   { f.get(); }
-										        catch (InterruptedException e) { } 
-										        catch (ExecutionException   e) { }         
-										    }
-											
-											
-									executorService1.shutdown();*/    
-						
-						
 					}
-			    }
-			});
+			   // }
+			//});
        		
        		
-	       		ExecutorService executorService2 = Executors.newFixedThreadPool(NUM_CORES);
-	       		Future future2 = executorService2.submit(new Runnable() {
+	       	//	ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
+	       		Future future2 = executorService.submit(new Runnable() {
 				    public void run() {
 				    	if (stitchIdFromSider !=null){
 							for (String s:stitchIdFromSider){
 								String drugName=ReadStitch.getATCNameByStitchID(s);
 								addMedecine(drugName);
 							}
+				    	}
+				    	if (symptomIdFromHpObo !=null){				
+							for (String s : symptomIdFromHpObo){
+								ArrayList<String> diseaseLabel;
+								try {
+									diseaseLabel = ReadHpoAnnotations.getDiseaseLabelBySignId(s);
+									for(String s1:diseaseLabel){
+										addDisease(s1);
+									}
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+							}
+						}
 						
+						
+						if (diseaseNameFromOrpha !=null){
+							for (String s : diseaseNameFromOrpha){
+								addDisease(s);
+							}
+							
+						}
 				        
-				    }
+				    
 				    }
 				});
        		
@@ -123,21 +139,14 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			 */
 	       	
        		/*ExecutorService executorService3 = Executors.newFixedThreadPool(NUM_CORES);;
-       		Future future3 = executorService3.submit(new Runnable() {
+       		executorService3.submit(new Runnable() {
 			  public void run() {*/
 				  
-			    	long firstTime = System.nanoTime();
-			    	 ExecutorService executorService3 = Executors.newFixedThreadPool(NUM_CORES);
-				       List<Future<?>> futures3  = new LinkedList<Future<?>>();
-	
+			   //  ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
+				 List<Future<?>> futures3  = new LinkedList<Future<?>>();
 	             if (cuiMedecineOmimOnto!=null){
-				//for (String s:cuiMedecineOmimOnto){ 
-						//HERE
-					// ExecutorService executorService3 = Executors.newFixedThreadPool(NUM_CORES);
-				       // List<Future<?>> futures3  = new LinkedList<Future<?>>();
 						for (String s:cuiMedecineOmimOnto){ 
-
-							Future future11 = executorService3.submit(new Runnable() {
+							Future future11 = executorService.submit(new Runnable() {
 							public void run() {
 									try{
 										ArrayList<String> stitchId=AccesSider.getStitchIdByCUI(s, "name");;
@@ -145,31 +154,18 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 											 ExecutorService executorService111 = Executors.newFixedThreadPool(1);
 										     
 											for (String s1:stitchId){
+												
 												Future future111 = executorService111.submit(new Runnable() {
 													public void run() {
 														String label=ReadStitch.getATCNameByStitchID(s1);
 														addMedecine(label);
-											
 												}});
-												//futures111.add(future111);
+												futures3.add(future111);
 											}
 											
 											
 										}
-										ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
-										if (sideEffectStitchID !=null){
-											 ExecutorService executorService112 = Executors.newFixedThreadPool(1);
-											for (String s1:sideEffectStitchID){
-												executorService112.submit(new Runnable() {
-													public void run() {
-														String label=ReadStitch.getATCNameByStitchID(s1);
-														addOriginSideEffect(label);
-											
-												}});
-												
-											}
-									
-								}
+										
 		 					}catch(Exception ex){
 		 						System.err.println("autre erreur");
 		 						while (ex!=null){
@@ -180,103 +176,158 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		 					
 						
 		 				 }});
-		 				futures3.add(future11);
+		 				//futures3.add(future11);
 
 				}
 						
 						  
-				long secondTimeT = System.nanoTime();
-	       		double durationT1 = (firstTime - secondTime)/Math.pow(10,9);
+				
 	       		//System.out.println("duration T "+durationT1);
 	             }
 	             
 			    //}
 			//});
-       		
-      
-			
-			
+	             
+			     long firstTime = System.nanoTime();
+			     
+			    // ExecutorService executorService3Bis = Executors.newFixedThreadPool(NUM_CORES);
+			     
+				 List<Future<?>> futures3Bis  = new LinkedList<Future<?>>();
+	             if (cuiMedecineOmimOnto!=null){
+	 				for (String s:cuiMedecineOmimOnto){ 
+	 					Future future11 = executorService.submit(new Runnable() {
+							public void run() {
+									try{
+										ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
+					 		             if (sideEffectStitchID !=null){
+					 						for (String s1:sideEffectStitchID){
+					 							Future future111 = executorService.submit(new Runnable() {
+					 								public void run() {
+					 										
+					 									String label=ReadStitch.getATCNameByStitchID(s1);
+					 									addOriginSideEffect(label);
+					 										
+					 								}});
+					 							futures3Bis.add(future111);
+					 						}
+					 		             }
+										
+		 					}catch(Exception ex){
+		 						System.err.println("autre erreur");
+		 						while (ex!=null){
+		 							System.err.println("Error msg: "+ex.getMessage());
+		 							ex.printStackTrace();			
+		 						}
+		 					}
+		 				 }});
+		 				
+	 				}
+	             }
+	             long secondTimeT = System.nanoTime();
+		       	double durationT = (firstTime - secondTimeT)/Math.pow(10,9);
+	       		System.out.println("duration T "+durationT);
 
-       		ExecutorService executorService4 = Executors.newFixedThreadPool(NUM_CORES);
-       		Future future4 = executorService4.submit(new Runnable() {
-			    public void run() {
-			    	if (cuiFromSider!= null){
-			    		try {
-			    			for (String s: cuiFromSider){
-			    				
-								String classId=ReadOmimOnto.CUIToClassID(s);
-								if (classId !=null){
-									ArrayList<String> diseaseLabelFromOmim=ReadOmim.getTI("NO",classId);
-									ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(classId);
-									
-									for (String s1:diseaseLabelFromOmim){
-										addDisease(s1);
-									}
-									for (String s2:diseaseLabelFromHpoAnnot){
-										addDisease(s2);
-									}
+	             
+				 List<Future<?>> futures4 = new LinkedList<Future<?>>();
+
+	       	 if (diseaseIdFromOrpha != null){
+	 				for (String s:diseaseIdFromOrpha ){
+	 					Future future11 = executorService.submit(new Runnable() {
+							public void run() {
+								try {
+									ArrayList<String> diseaseLabelFromHpoAnnotation = ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
+									for (String s2 : diseaseLabelFromHpoAnnotation){
+				 						addDisease(s2);
+				 					}
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
 								}
-						
+			 					
 							}
-			    			
-					} catch (IOException | ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			    	 catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-					}
+	 					});
+	 					futures4.add(future11);
+	 				}
+	 					
+	       	 }
+	 			
+	             
+	             /*we maybe can also let this one down.
+	              * In fact when we find a diseaseIdFromOmim we in the same time find a  diseaseNameFromOmim.
+	              * This diseaseNameFromOmim is added to Disease List.
+	              * Here we add the name link to the diseaseIdFromOmim in HpAnnotations but this one might be the same as 
+	              * diseaseNameFromOmim.
+	              * We have to check!
+	              */
+	             if (diseaseIdFromOmim!=null){
+	            	 for (String s :diseaseIdFromOmim){
+							ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
+							for(String s1: diseaseLabelFromHpoAnnot){
+								addDisease(s1);
+							}
+	            	 }
+	             }
+	             
+	             if (diseaseFromOmim!=null){
+	 				for(String s:diseaseFromOmim){
+	 					addDisease(s);
+	 				}
+	 			}
+	             
+	             
+	           
+	             
+			
+			
+
+       		//ExecutorService executorService4 = Executors.newFixedThreadPool(NUM_CORES);
+	       		
+	       		/*commentaire en frncais:
+	       		 * here we take all cui from symptom in Sider and search these cui in omim_onto
+	       		 * but in this cas these cui will have a MTHU at begining so we wont found them in OMIM or in HPoAnnotations
+	       		 * so i i think this part is not useful
+	       		 */
+				 /*List<Future<?>> futures4  = new LinkedList<Future<?>>();
+			    	if (cuiFromSider!= null){
 			    		
-			    }
+			    			for (String s: cuiFromSider){
+			    				Future future4 = executorService.submit(new Runnable() {
+			    				    public void run() {
+			    				    	try {
+			    				    		
+											String classId=ReadOmimOnto.CUIToClassID(s);
+											
+											if (classId !=null){
+												
+												ArrayList<String> diseaseLabelFromOmim=ReadOmim.getTI("NO",classId);
+												ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(classId);
+												
+												for (String s1:diseaseLabelFromOmim){
+								    				    	addDisease(s1+"MAMAN VA AU MARCHE");
+								    				   System.out.println("maladie depuis OMIM :"+s1);
+												}
+												for (String s2:diseaseLabelFromHpoAnnot){
+													
+								    				    	addDisease(s2);
+										    		 System.out.println("maladie depuis HPO :"+s2);	
+												}
+											}
+			    				    	} catch (IOException | ParseException e) {
+			    							// TODO Auto-generated catch block
+			    							e.printStackTrace();
+			    						}
+			    				    	 catch (Exception e) {
+			    								// TODO Auto-generated catch block
+			    								e.printStackTrace();
+			    						}
+			    				    }});
+								futures4.add(future4);			
+							}
 			    	
-		       		
-			}});
-			
-			
+			    }*/
+			    	
+	 			long attenteDebutfirst = System.nanoTime();
 
-			
-			if (diseaseIdFromOrpha != null){
-				/*We follow the mapping*/
-				for (String s:diseaseIdFromOrpha ){
-					//System.out.println(s);
-					ArrayList<String> diseaseLabelFromHpoAnnotation=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
-					for (String s2 : diseaseLabelFromHpoAnnotation){
-						addDisease(s2);
-					}
-				}
-			}
-			
-				
-			
-
-			if (symptomIdFromHpObo !=null){				
-				for (String s : symptomIdFromHpObo){
-					ArrayList<String> diseaseLabel=ReadHpoAnnotations.getDiseaseLabelBySignId(s);
-					for(String s1:diseaseLabel){
-						addDisease(s1);
-					}
-				}
-			}
-			
-			
-			if (diseaseNameFromOrpha !=null){
-				for (String s : diseaseNameFromOrpha){
-					addDisease(s);
-				}
-				
-			}
-			
-			if (diseaseFromOmim!=null){
-				for(String s:diseaseFromOmim){
-					addDisease(s);
-				}
-			}
-			
-			
-			
-			
-			long first = System.nanoTime();
 
 			for (Future<?> f : first_futures)
 		    {
@@ -284,9 +335,22 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		        catch (InterruptedException e) { } 
 		        catch (ExecutionException   e) { }         
 		    }
-
+			long attenteFinfirst = System.nanoTime();
+       		double durFirst = (attenteDebutfirst- attenteFinfirst)/Math.pow(10,9);
+       		System.out.println("durFirst "+durFirst);
+       		
+			long attenteDebutBis = System.nanoTime();
+			for (Future<?> f : futures3Bis)
+		    {
+		        try   { f.get(); }
+		        catch (InterruptedException e) { } 
+		        catch (ExecutionException   e) { }         
+		    }
 			
-       		//System.out.println("duration T "+durationT1);
+			long attenteFinBis = System.nanoTime();
+       		double durBis = (attenteDebutBis- attenteFinBis)/Math.pow(10,9);
+
+			long attenteDebut = System.nanoTime();
 			for (Future<?> f : futures3)
 		    {
 		        try   { f.get(); }
@@ -294,20 +358,40 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		        catch (ExecutionException   e) { }         
 		    }
 			
-			long second = System.nanoTime();
-       		double dur = (first - second)/Math.pow(10,9);
-       		System.out.println("duration T "+dur);
-	while ( !future2.isDone()   || !future4.isDone() || !future1.isDone()){};
+			long attenteFin = System.nanoTime();
+       		double dur = (attenteDebut - attenteFin)/Math.pow(10,9);
+       		System.out.println("dur future 3 Bis "+durBis);
+       		System.out.println("dur future 3 "+dur);
+       		long attentefuture2 = System.nanoTime();
+       		future2.get();
+       		long attentefuture2Fin = System.nanoTime();
+       		double durFuture2 = (attentefuture2 - attentefuture2Fin)/Math.pow(10,9);
+       		
+       		long attentefuture4 = System.nanoTime();
+       		for (Future<?> f : futures4)
+		    {
+		        try   { f.get(); }
+		        catch (InterruptedException e) { } 
+		        catch (ExecutionException   e) { }         
+		    }
+       		long attentefuture4Fin = System.nanoTime();
+       		double durFuture4 = (attentefuture4 - attentefuture4Fin)/Math.pow(10,9);
+       		
+       		System.out.println("future 2 :"+durFuture2);
+       		System.out.println("future 4 :"+durFuture4);
+       		System.out.println("attente fin totale : "+(attentefuture4Fin-attenteDebutfirst)/Math.pow(10,9));
+	//while ( !future2.isDone()   || !future4.isDone() || !future1.isDone()){};
 	
-	
-	executorService1.shutdown();  
-	executorService2.shutdown(); 
-	executorService3.shutdown(); 
-	executorService4.shutdown(); 
+	executorService.shutdown();  
+
+	//executorService1.shutdown();  
+	/*executorService2.shutdown(); 
+	executorService3.shutdown(); */
+	//executorService4.shutdown(); 
 
 	
 	
-	AccesSider.closeSider();
+	//AccesSider.closeSider();
 	ReadHpoAnnotations.disconnect();
 	
 		} catch (Exception e) {
@@ -408,10 +492,11 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		 //String rep = "";
 		
 			System.out.println("Entrer votre requette" +"|"+" q pour sortir");
-	        while (!"q".equals(userInput)) {
+	      while (!"q".equals(userInput)) {
 	            
 	                System.out.print(":> ");
 	                userInput = sc.nextLine();
+	               // userInput="cancer";
 	                try{
 	                	long startTime = System.nanoTime();
 	                	doSearch(userInput);

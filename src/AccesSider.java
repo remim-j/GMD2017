@@ -43,8 +43,8 @@ public abstract class AccesSider {
 	public static ArrayList<String> idMedocCauseEffetSecondaire(String side_effect) throws Exception{
 		
 		//activer la connexion
-		//Class.forName(DRIVER);
-		//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		Class.forName(DRIVER);
+		Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 		
 		
 		//Requette SQL
@@ -71,7 +71,7 @@ public abstract class AccesSider {
 		}
 		res.close();
 		st.close();
-		//con.close();
+		con.close();
 		
 		return listeIdMedicaments;
 	}
@@ -79,8 +79,8 @@ public abstract class AccesSider {
 public static ArrayList<String> getStitchIDByConceptName(String concept_name) throws Exception{
 		
 		//activer la connexion
-		//Class.forName(DRIVER);
-		//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		Class.forName(DRIVER);
+		Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 		
 		//Requette SQL
 		String myQuery="SELECT * "+
@@ -103,7 +103,7 @@ public static ArrayList<String> getStitchIDByConceptName(String concept_name) th
 		}
 		res.close();
 		st.close();
-		//con.close();
+		con.close();
 		
 		return listeIdMedicaments;
 	}
@@ -111,8 +111,8 @@ public static ArrayList<String> getStitchIDByConceptName(String concept_name) th
 public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	
 	//activer la connexion
-	//Class.forName(DRIVER);
-	//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+	Class.forName(DRIVER);
+	Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 	
 	//Requette SQL
 	String myQuery="SELECT * "+
@@ -135,7 +135,7 @@ public static ArrayList<String> cuiToCure(String concept_name) throws Exception{
 	}
 	res.close();
 	st.close();
-	//con.close();
+	con.close();
 	
 	return listeCui;
 }
@@ -145,8 +145,8 @@ public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws 
 	/*initialize sider*/
 	//InitSider();
 	//activer la connexion
-			//Class.forName(DRIVER);
-			//Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+			Class.forName(DRIVER);
+			Connection con=DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
 			
 			//Requette SQL
 			String myQuery="SELECT * "+
@@ -170,7 +170,7 @@ public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws 
 			}
 			res.close();
 			st.close();
-			//con.close();
+			con.close();
 			if (listeIdMedicaments.size()!=0){
 				return listeIdMedicaments;
 
@@ -184,7 +184,7 @@ public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws 
 	
 	public static void main(String[] args){
 		try{
-			InitSider();
+			//InitSider();
 			 long startTime = System.nanoTime();
 			 InitSider();
 			ArrayList<String> liste=cuiToCure("Failure");
@@ -192,24 +192,24 @@ public static ArrayList<String> getStitchIdByCUI(String cui,String name) throws 
        		double duration = (endTime - startTime)/Math.pow(10,9);
        		System.out.println("\n Time needed : "+duration);
 			for (String s : liste){
-				System.out.println(s.toString());
+				//System.out.println(s.toString());
 			}
 			 
-			ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI("Cancer");
+			ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI("cancer");
 
 			for (String s:cuiMedecineOmimOnto){
-				/*ArrayList<String> stitchId=AccesSider.getStitchIdByCUI(s, "name");
+				ArrayList<String> stitchId=AccesSider.getStitchIdByCUI(s, "name");
 				if (stitchId!=null){
 					for (String s1:stitchId){
 						String label=ReadStitch.getATCNameByStitchID(s1);
-						addMedecine(label);
+						System.out.println(label);
 					}
-				}*/
+				}
 				ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
 				if (sideEffectStitchID !=null){
 					for (String s1:sideEffectStitchID){
 						String label=ReadStitch.getATCNameByStitchID(s1);
-						System.out.println(label);
+						//System.out.println(label);
 					}
 				}
 			}
