@@ -1,10 +1,13 @@
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,13 +23,19 @@ static HashMap<String,Integer> provokedDiseases=new HashMap<String,Integer>();
 static HashMap<String,Integer> originOfSideEffect=new  HashMap<String,Integer>();	
 static HashMap<String,Integer>  usefulMedecine=new HashMap<String,Integer>();	
 static ArrayList<String> suggestedEntry=new ArrayList<String>();
+static ResultsLists possibleDiseases=new  ResultsLists();	
+static ResultsLists possibleOriginOfSideEffect=new  ResultsLists();	
+static ResultsLists usefulMedecines=new  ResultsLists();	
+
+
 
 	
 	static Scanner sc=  new Scanner(System.in);;
 	private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 
 	public static void doSearch(String userInput){
-		
+	ArrayList<String> a=new ArrayList<String>();
+	
 		
 		Long startTime=(long) (System.nanoTime());
 		try {
@@ -77,6 +86,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 							 				public void run() {
 							 					String originOfSideEffectName=ReadStitch.getATCNameByStitchID(s);
 												addOriginSideEffect(originOfSideEffectName);
+												possibleOriginOfSideEffect.add(originOfSideEffectName,"Sider");
 							 				 }});
 							 				first_futures.add(future11);
 
@@ -99,6 +109,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 							for (String s:stitchIdFromSider){
 								String drugName=ReadStitch.getATCNameByStitchID(s);
 								addMedecine(drugName);
+								//usefulMedecines.add(drugName,"Sider");
+
 							}
 				    	}
 				    	if (symptomIdFromHpObo !=null){				
@@ -108,6 +120,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 									diseaseLabel = ReadHpoAnnotations.getDiseaseLabelBySignId(s);
 									for(String s1:diseaseLabel){
 										addDisease(s1);
+										possibleDiseases.add(s1, "Hpo Annotation");
 									}
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
@@ -121,6 +134,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 						if (diseaseNameFromOrpha !=null){
 							for (String s : diseaseNameFromOrpha){
 								addDisease(s);
+								possibleDiseases.add(s, "OrphaData");
+
 							}
 							
 						}
@@ -161,9 +176,11 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 												Future future111 = executorService111.submit(new Runnable() {
 													public void run() {
 														String label=ReadStitch.getATCNameByStitchID(s1);
-														addMedecine(label);
+														//addMedecine(label);
+														usefulMedecines.add(label,"Omim_onto + Sider");
+														
 												}});
-												futures3.add(future111);
+												//futures3.add(future111);
 											}
 											
 											
@@ -179,7 +196,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 		 					
 						
 		 				 }});
-		 				//futures3.add(future11);
+		 				futures3.add(future11);
 
 				}
 						
@@ -210,7 +227,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 					 										
 					 									String label=ReadStitch.getATCNameByStitchID(s1);
 					 									addOriginSideEffect(label);
-					 										
+					 									possibleOriginOfSideEffect.add(label,"Omim_Onto + sider");
+					 									System.out.println("hilyigjhkkhlguy"+possibleOriginOfSideEffect);
 					 								}});
 					 							futures3Bis.add(future111);
 					 						}
@@ -242,6 +260,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 									ArrayList<String> diseaseLabelFromHpoAnnotation = ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
 									for (String s2 : diseaseLabelFromHpoAnnotation){
 				 						addDisease(s2);
+										possibleDiseases.add(s2, "OrphaData + Hpo Annotation");
+
 				 					}
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
@@ -271,6 +291,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 							ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
 							for(String s1: diseaseLabelFromHpoAnnot){
 								addDisease(s1);
+								possibleDiseases.add(s1, "Omim + Hpo Annotations");
 							}
 	            	 }
 	             }
@@ -281,6 +302,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	             if (diseaseFromOmim!=null){
 	 				for(String s:diseaseFromOmim){
 	 					addDisease(s);
+	 					possibleDiseases.add(s, "Omim");
 	 				}
 	 			}
 	             
@@ -364,31 +386,41 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	
 	public static void showResult(){
 		
-		if (provokedDiseases.size()!=0){
+		
+		/*if (provokedDiseases.size()!=0){
 			System.out.println("*****provoked diseases****");
 			for(String s:provokedDiseases.keySet()){
 				System.out.println(s +" : "+provokedDiseases.get(s));
 			}
 			System.out.println("\n");
-		}
+		}*/
 		
-		if(usefulMedecine.size()!=0){
+		System.out.println("*****useful Medecines****");
+		System.out.println(possibleDiseases.toString());
+		
+		/*if(usefulMedecine.size()!=0){
 			System.out.println("*****useful Medecines****");
 			for(String s:usefulMedecine.keySet()){
 				System.out.println(s +" : "+usefulMedecine.get(s));
 
 			}
 			System.out.println("\n");
-		}
+		}*/
 		
-		if (originOfSideEffect.size()!=0){
+		System.out.println("*****useful Medecines****");
+		System.out.println(usefulMedecines.toString());
+		
+		/*if (originOfSideEffect.size()!=0){
 			System.out.println("*****origin of possible SideEffect****");
 			for(String s:originOfSideEffect.keySet()){
 				System.out.println(s +" : "+originOfSideEffect.get(s));
 			}
 			System.out.println("\n");
 
-		}
+		}*/
+		System.out.println("*****origin of possible SideEffect****");
+		System.out.println(possibleOriginOfSideEffect.toString());
+
 		
 		if(suggestedEntry.size()!=0){
 			System.out.println("*****suggestions for entry****");
@@ -447,6 +479,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			}
 		}
 	}
+	
+
 	public static void main(String[] args){
 		String userInput="";
 		

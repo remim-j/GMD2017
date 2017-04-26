@@ -35,6 +35,7 @@ public abstract class ReadHpObo {
 
 	private static void ReadHpObo(String field, String queryString) throws IOException, ParseException {
 		
+		/* we no longer need field but i keep it */
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
 		Analyzer analyzer = new StandardAnalyzer();
