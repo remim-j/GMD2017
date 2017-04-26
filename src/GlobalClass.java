@@ -45,20 +45,12 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			
 			/*first we start with bases which link with the entry*/
 			 
-			ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
 			/* cui from sider not very useful i am going to explain it to you at the next meeting
 			 * We can not find diseaese which have their cui in sider because  the only only link which was 
 			 * cui with omim_onto cn not be exploited (cause of MTHU).
 			 */
 			//ArrayList<String> cuiFromSider=AccesSider.cuiToCure(userInput);
-			ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign(userInput);
-			ArrayList<String> diseaseFromOmim=ReadOmim.getTI("CS",userInput);
-			ArrayList<String> diseaseIdFromOmim=ReadOmim.getNO("CS",userInput);
-
-			ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name",userInput);
-			ArrayList<String> diseaseNameFromOrpha=AccesOrphaDataBase.GetDeseaseByClinicalSign(userInput);
-			ArrayList<String> idOriginOfSideEffectFromSider=AccesSider.idMedocCauseEffetSecondaire(userInput);
-			ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI(userInput);
+			
 			
 			
 			long initListeFin= System.nanoTime();
@@ -69,6 +61,9 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			/*we create a thread which will do this task*/
 			//ExecutorService executorService1 = Executors.newFixedThreadPool(NUM_CORES);
 			ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
+
+			
+			ArrayList<String> idOriginOfSideEffectFromSider=AccesSider.idMedocCauseEffetSecondaire(userInput);
 
 			  
 			List<Future<?>> first_futures  = new LinkedList<Future<?>>();
@@ -90,7 +85,13 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 			   // }
 			//});
        		
-       		
+			        
+			        
+					ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
+					ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name",userInput);
+					ArrayList<String> diseaseNameFromOrpha=AccesOrphaDataBase.GetDeseaseByClinicalSign(userInput);
+
+
 	       	//	ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
 	       		Future future2 = executorService.submit(new Runnable() {
 				    public void run() {
@@ -141,6 +142,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
        		/*ExecutorService executorService3 = Executors.newFixedThreadPool(NUM_CORES);;
        		executorService3.submit(new Runnable() {
 			  public void run() {*/
+	       		
+				ArrayList<String> cuiMedecineOmimOnto=ReadOmimOnto.SymptomToCUI(userInput);
 				  
 			   //  ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
 				 List<Future<?>> futures3  = new LinkedList<Future<?>>();
@@ -187,7 +190,8 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	             
 			    //}
 			//});
-	             
+	 			ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign(userInput);
+
 			     long firstTime = System.nanoTime();
 			     
 			    // ExecutorService executorService3Bis = Executors.newFixedThreadPool(NUM_CORES);
@@ -259,6 +263,9 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	              * diseaseNameFromOmim.
 	              * We have to check!
 	              */
+	       	 
+			ArrayList<String> diseaseIdFromOmim=ReadOmim.getNO("CS",userInput);
+
 	             if (diseaseIdFromOmim!=null){
 	            	 for (String s :diseaseIdFromOmim){
 							ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
@@ -268,6 +275,9 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	            	 }
 	             }
 	             
+	 	       	ArrayList<String> diseaseFromOmim=ReadOmim.getTI("CS",userInput);
+
+	             
 	             if (diseaseFromOmim!=null){
 	 				for(String s:diseaseFromOmim){
 	 					addDisease(s);
@@ -275,56 +285,7 @@ static ArrayList<String> suggestedEntry=new ArrayList<String>();
 	 			}
 	             
 	             
-	           
-	             
-			
-			
-
-       		//ExecutorService executorService4 = Executors.newFixedThreadPool(NUM_CORES);
-	       		
-	       		/*commentaire en frncais:
-	       		 * here we take all cui from symptom in Sider and search these cui in omim_onto
-	       		 * but in this cas these cui will have a MTHU at begining so we wont found them in OMIM or in HPoAnnotations
-	       		 * so i i think this part is not useful
-	       		 */
-				 /*List<Future<?>> futures4  = new LinkedList<Future<?>>();
-			    	if (cuiFromSider!= null){
-			    		
-			    			for (String s: cuiFromSider){
-			    				Future future4 = executorService.submit(new Runnable() {
-			    				    public void run() {
-			    				    	try {
-			    				    		
-											String classId=ReadOmimOnto.CUIToClassID(s);
-											
-											if (classId !=null){
-												
-												ArrayList<String> diseaseLabelFromOmim=ReadOmim.getTI("NO",classId);
-												ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(classId);
-												
-												for (String s1:diseaseLabelFromOmim){
-								    				    	addDisease(s1+"MAMAN VA AU MARCHE");
-								    				   System.out.println("maladie depuis OMIM :"+s1);
-												}
-												for (String s2:diseaseLabelFromHpoAnnot){
-													
-								    				    	addDisease(s2);
-										    		 System.out.println("maladie depuis HPO :"+s2);	
-												}
-											}
-			    				    	} catch (IOException | ParseException e) {
-			    							// TODO Auto-generated catch block
-			    							e.printStackTrace();
-			    						}
-			    				    	 catch (Exception e) {
-			    								// TODO Auto-generated catch block
-			    								e.printStackTrace();
-			    						}
-			    				    }});
-								futures4.add(future4);			
-							}
-			    	
-			    }*/
+	       
 			    	
 	 			long attenteDebutfirst = System.nanoTime();
 

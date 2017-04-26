@@ -7,6 +7,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -41,7 +42,14 @@ public abstract class ReadHpObo {
 		//TermQuery parser = new TermQuery(new Term(field.toString()));
 		//Query query = parser.parse(queryString);
 		
-		Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
+		//Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
+		
+		String[] queries={queryString,queryString};
+		String[] fields={"name","synonym"};
+		BooleanClause.Occur[] occurs={BooleanClause.Occur.SHOULD,BooleanClause.Occur.SHOULD};
+
+		//to remember MultiFieldQueryParser to search on many field
+		Query query = MultiFieldQueryParser.parse(queries,fields,occurs, analyzer);
 		
 		//System.out.println("Searching for: " + query.toString(field)); // to delete later
 		
@@ -84,14 +92,14 @@ public abstract class ReadHpObo {
 		long endTime = System.nanoTime();
 		long duration = (endTime - startTime);
 		for (String out : output) {
-			//System.out.println(out);
+			System.out.println(out);
 		}
 		field = "synonym";
 		query = "Abnormal growth";
 		System.out.println("\nInput \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		output = getId(field, query);
 		for (String out : output) {
-			//System.out.println(out);
+			System.out.println(out);
 		}
 		System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
 	}
