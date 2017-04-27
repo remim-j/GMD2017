@@ -68,9 +68,9 @@ public class Interface implements Initializable{
 	public void bouton(ActionEvent e){	//Get the input of the user, and launch the search
 		userInput = UserInput.getText();
 		body.GlobalClass.userInput = userInput;
-		int n = items.size();
+		int n = disease.size();
 		for ( int i = 0; i < n; i++){
-			items.remove(0);
+			disease.remove(0);
 		}
 		provokedDiseases = body.GlobalClass.provokedDiseases;
 		originOfSideEffect = body.GlobalClass.originOfSideEffect;
@@ -79,13 +79,13 @@ public class Interface implements Initializable{
 		possibleOriginOfSideEffect = body.GlobalClass.possibleOriginOfSideEffect;
 		usefulMedecines = body.GlobalClass.usefulMedecines;
 
-		Iterator<provokedDiseases> iteratorResultatTest = videos.iterator();
+		Iterator<provokedDiseases> iteratorResultatTest = disease.iterator();
 		if (provokedDiseases.size() == 0) {
 			System.out.println("Il n'y a pas de résultat");
 		} else {
 			while (iteratorResultatTest.hasNext()) {
 				Video video = iteratorResultatTest.next();
-				items.add(video.getTitle());
+				disease.add(video.getTitle());
 			}
 		}
 	    ProvokedDiseases.setItems(items);
@@ -106,16 +106,7 @@ public class Interface implements Initializable{
     	this.App = App;
 	}
 
-    public void play(ActionEvent e){
-    	int select;
-    	select = ProvokedDiseases.getSelectionModel().getSelectedIndex();
-    	if ( select >=0 ){
-        	webviewVideo.getEngine().load((videos.getVideo(select).getUrlVideo()));
-        	labelTitre.setText(items.get(select));
-    	}
-    }
-
-//////////////////////////////////////////////////////////////// Gestion des favoris ////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////// Displaying the results ////////////////////////////////////////////////////////////
 
     public void playFav(ActionEvent e){
     	int select;
@@ -156,10 +147,10 @@ public class Interface implements Initializable{
     	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
     	if (select >=0){
         	webviewVideo.getEngine().load(App.getOriginOfSideEffect().getVideo(select).getUrlVideo());
-        	labelTitre.setText(itemsPlay.get(select));
+        	labelTitre.setText(sideEffect.get(select));
     	}else{
     		webviewVideo.getEngine().load(App.getOriginOfSideEffect().getVideo(0).getUrlVideo());
-        	labelTitre.setText(itemsPlay.get(0));
+        	labelTitre.setText(sideEffect.get(0));
     	}
     }
 
@@ -167,50 +158,50 @@ public class Interface implements Initializable{
     	int select;
     	select = ProvokedDiseases.getSelectionModel().getSelectedIndex();
     	if(select >= 0){
-    		itemsPlay.add(videos.getVideo(select).getTitle());
+    		sideEffect.add(videos.getVideo(select).getTitle());
     		App.getOriginOfSideEffect().addVideo(videos.getVideo(select));
     	}
-    	OriginOfSideEffect.setItems(itemsPlay);
+    	OriginOfSideEffect.setItems(sideEffect);
     }
 
     public void removePlay(ActionEvent m){
     	int select;
     	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
     	if (select >= 0){
-    		itemsPlay.remove(select);
+    		sideEffect.remove(select);
     		App.getOriginOfSideEffect().removeVideo(videos.getVideo(select));
     	}
-    	OriginOfSideEffect.setItems(itemsPlay);
+    	OriginOfSideEffect.setItems(sideEffect);
     }
 
     public void ajoutPlayFromFav(ActionEvent m){
     	int select;
     	select = UsefulMedecine.getSelectionModel().getSelectedIndex();
     	if(select >= 0){
-    		itemsPlay.add(App.getUsefulMedecine().getVideo(select).getTitle());
+    		sideEffect.add(App.getUsefulMedecine().getVideo(select).getTitle());
     		App.getOriginOfSideEffect().addVideo(App.getUsefulMedecine().getVideo(select));
     	}
-    	OriginOfSideEffect.setItems(itemsPlay);
+    	OriginOfSideEffect.setItems(sideEffect);
     }
 
     public void suivPlay(ActionEvent m){
     	int select;
     	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
-    	if (select >=0 && select < itemsPlay.size()-1 && itemsPlay.size()-1 >= 0){ //If the selected vid is not the last vid
+    	if (select >=0 && select < sideEffect.size()-1 && sideEffect.size()-1 >= 0){ //If the selected vid is not the last vid
         	// Remove the selected video
-        	itemsPlay.remove(0);
+        	sideEffect.remove(0);
     		App.getOriginOfSideEffect().removeVideo(App.getOriginOfSideEffect().getVideo(0));
     		// Play the next video
         	webviewVideo.getEngine().load(App.getOriginOfSideEffect().getVideo(0).getUrlVideo());
-        	labelTitre.setText(itemsPlay.get(0));
-        	OriginOfSideEffect.setItems(itemsPlay);
-    	} else if (select >= 0 && itemsPlay.size()-1 == 0 && select <= itemsPlay.size()-1){
-        	itemsPlay.remove(0);
+        	labelTitre.setText(sideEffect.get(0));
+        	OriginOfSideEffect.setItems(sideEffect);
+    	} else if (select >= 0 && sideEffect.size()-1 == 0 && select <= sideEffect.size()-1){
+        	sideEffect.remove(0);
     		App.getOriginOfSideEffect().removeVideo(App.getOriginOfSideEffect().getVideo(0));
     		webviewVideo.getEngine().load(null);
     		labelTitre.setText("");
     	}
-    	OriginOfSideEffect.setItems(itemsPlay);
+    	OriginOfSideEffect.setItems(sideEffect);
     }
 
     ////////////////////////////////////////////////////////// Téléchargements //////////////////////////////////////////////////////////////////
@@ -228,19 +219,19 @@ public class Interface implements Initializable{
     	int select;
     	select = ProvokedDiseases.getSelectionModel().getSelectedIndex();
     	if(select >= 0){
-    		itemsPlay.add(videos.getVideo(select).getTitle());
+    		sideEffect.add(videos.getVideo(select).getTitle());
     		App.getOriginOfSideEffect().addVideo(videos.getVideo(select));
     	}
-    	OriginOfSideEffect.setItems(itemsPlay);
+    	OriginOfSideEffect.setItems(sideEffect);
     }
 
     public void telechargerPlay(ActionEvent m){
     	int select;
     	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
     	if(select >= 0){
-    		itemsPlay.add(videos.getVideo(select).getTitle());
+    		sideEffect.add(videos.getVideo(select).getTitle());
     		App.getOriginOfSideEffect().addVideo(videos.getVideo(select));
     	}
-    	OriginOfSideEffect.setItems(itemsPlay);
+    	OriginOfSideEffect.setItems(sideEffect);
     }
 }
