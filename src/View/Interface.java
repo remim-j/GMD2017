@@ -25,76 +25,75 @@ import javafx.scene.web.WebView;
 
 public class Interface implements Initializable{
 
-	private HashMap<String,Integer> provokedDiseases=new HashMap<String,Integer>();
-	private HashMap<String,Integer> originOfSideEffect=new  HashMap<String,Integer>();
-	private HashMap<String,Integer>  usefulMedecine=new HashMap<String,Integer>();
-	private ArrayList<String> suggestedEntry=new ArrayList<String>();
-	private ResultsLists possibleDiseases=new  ResultsLists();
-	private ResultsLists possibleOriginOfSideEffect=new  ResultsLists();
-	private ResultsLists usefulMedecines=new  ResultsLists();
+	private ResultsLists possibleDiseases =new  ResultsLists();
+	private ResultsLists possibleOriginOfSideEffect =new  ResultsLists();
+	private ResultsLists usefulMedecines =new  ResultsLists();
+
+	private String name;
+	private ArrayList<String> origin;
+	private HashMap<String,ArrayList<String>> results;
+
     private String userInput;
 
     @FXML
     private TextField UserInput;
 
     @FXML
-    public ListView<String> ProvokedDiseases;
+    public ListView<String> Diseases;
 
     @FXML
-    public ListView<String> UsefulMedecine;
+    public ListView<String> Medecine;
 
     @FXML
-    public ListView<String> OriginOfSideEffect;
-
-    @FXML
-    public ListView<String> SuggestedEntry;
-
-    @FXML
-    private WebView webviewVideo;
-
-    @FXML
-    private Label labelTitre;
+    public ListView<String> SideEffect;
 
 
-	ObservableMap<String,Integer> disease = FXCollections.observableMap (provokedDiseases);
-	ObservableMap<String,Integer> sideEffect = FXCollections.observableMap (originOfSideEffect);
-	ObservableMap<String,Integer> medecine = FXCollections.observableMap (usefulMedecine);
-	ObservableList<String> suggestion = FXCollections.observableList(suggestedEntry);
-
+	ArrayList<String> disease;
 
 	private App App;
 
 
-	public void bouton(ActionEvent e){	//Get the input of the user, and launch the search
+	public void bouton(ActionEvent e){	//Get the input of the user, and launch the research
 		userInput = UserInput.getText();
 		body.GlobalClass.userInput = userInput;
-		int n = disease.size();
+		int n = disease.size();		//Initializing the arrayList
 		for ( int i = 0; i < n; i++){
 			disease.remove(0);
 		}
-		provokedDiseases = body.GlobalClass.provokedDiseases;
-		originOfSideEffect = body.GlobalClass.originOfSideEffect;
-		usefulMedecine = body.GlobalClass.usefulMedecine;
+
 		possibleDiseases = body.GlobalClass.possibleDiseases;
 		possibleOriginOfSideEffect = body.GlobalClass.possibleOriginOfSideEffect;
 		usefulMedecines = body.GlobalClass.usefulMedecines;
 
-		Iterator<provokedDiseases> iteratorResultatTest = disease.iterator();
-		if (provokedDiseases.size() == 0) {
-			System.out.println("Il n'y a pas de résultat");
-		} else {
-			while (iteratorResultatTest.hasNext()) {
-				Video video = iteratorResultatTest.next();
-				disease.add(video.getTitle());
-			}
-		}
-	    ProvokedDiseases.setItems(items);
+		dispDiseases(possibleDiseases);
+		dispSideEffect(possibleOriginOfSideEffect);
+		dispMedecine(usefulMedecines);
+
+	}
+
+////////////////////////////////////////////////////////////////Displaying the results ////////////////////////////////////////////////////////////
+
+    private void dispMedecine(ResultsLists usefulMedecines2) {
+		// TODO Auto-generated method stub
+
 	}
 
 
-    public void initialize(URL arg0, ResourceBundle arg1) {
-	    ProvokedDiseases.setItems(items);
-	    OriginOfSideEffect.setItems(itemsSE);
+	private void dispSideEffect(ResultsLists possibleOriginOfSideEffect2) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	private void dispDiseases(ResultsLists possibleDiseases2) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	public void initialize(URL arg0, ResourceBundle arg1) {
+	    Diseases.setItems(items);
+	    SideEffect.setItems(itemsSE);
 	    App.getUsefulMedecine().loadVideos(App.getPathUsefulMedecine());
 	    for ( Video fav : App.getUsefulMedecine() ){
 	    	itemsMedecine.add(fav.getTitle());
@@ -106,132 +105,4 @@ public class Interface implements Initializable{
     	this.App = App;
 	}
 
-//////////////////////////////////////////////////////////////// Displaying the results ////////////////////////////////////////////////////////////
-
-    public void playFav(ActionEvent e){
-    	int select;
-    	select = UsefulMedecine.getSelectionModel().getSelectedIndex();
-    	if ( select >=0 ){
-        	webviewVideo.getEngine().load(App.getUsefulMedecine().getVideo(select).getUrlVideo());
-        	labelTitre.setText(itemsMedecine.get(select));
-    	}
-    }
-
-
-    public void ajouterFav(ActionEvent m){
-    	int select;
-    	select = ProvokedDiseases.getSelectionModel().getSelectedIndex();
-    	if ( select >= 0 ){
-    		itemsMedecine.add(videos.getVideo(select).getTitle());
-    		App.getUsefulMedecine().addVideo(videos.getVideo(select));
-    	}
-    	UsefulMedecine.setItems(itemsMedecine);
-		App.getUsefulMedecine().saveUsefulMedecine(App.getPathUsefulMedecine());
-    }
-
-    public void removeFav(ActionEvent m){
-    	int select;
-    	select = UsefulMedecine.getSelectionModel().getSelectedIndex();
-    	if ( select >= 0 ){
-    		itemsMedecine.remove(select);
-    		App.getUsefulMedecine().removeVideo(App.getUsefulMedecine().getVideo(select));
-    	}
-    	UsefulMedecine.setItems(itemsMedecine);
-		App.getUsefulMedecine().saveUsefulMedecine(App.getPathUsefulMedecine());
-    }
-
-////////////////////////////////////////////////////// Gestion de la playlist ////////////////////////////////////////////////////////////
-
-    public void playOriginOfSideEffect(ActionEvent e){
-    	int select;
-    	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
-    	if (select >=0){
-        	webviewVideo.getEngine().load(App.getOriginOfSideEffect().getVideo(select).getUrlVideo());
-        	labelTitre.setText(sideEffect.get(select));
-    	}else{
-    		webviewVideo.getEngine().load(App.getOriginOfSideEffect().getVideo(0).getUrlVideo());
-        	labelTitre.setText(sideEffect.get(0));
-    	}
-    }
-
-    public void ajoutPlay(ActionEvent m){
-    	int select;
-    	select = ProvokedDiseases.getSelectionModel().getSelectedIndex();
-    	if(select >= 0){
-    		sideEffect.add(videos.getVideo(select).getTitle());
-    		App.getOriginOfSideEffect().addVideo(videos.getVideo(select));
-    	}
-    	OriginOfSideEffect.setItems(sideEffect);
-    }
-
-    public void removePlay(ActionEvent m){
-    	int select;
-    	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
-    	if (select >= 0){
-    		sideEffect.remove(select);
-    		App.getOriginOfSideEffect().removeVideo(videos.getVideo(select));
-    	}
-    	OriginOfSideEffect.setItems(sideEffect);
-    }
-
-    public void ajoutPlayFromFav(ActionEvent m){
-    	int select;
-    	select = UsefulMedecine.getSelectionModel().getSelectedIndex();
-    	if(select >= 0){
-    		sideEffect.add(App.getUsefulMedecine().getVideo(select).getTitle());
-    		App.getOriginOfSideEffect().addVideo(App.getUsefulMedecine().getVideo(select));
-    	}
-    	OriginOfSideEffect.setItems(sideEffect);
-    }
-
-    public void suivPlay(ActionEvent m){
-    	int select;
-    	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
-    	if (select >=0 && select < sideEffect.size()-1 && sideEffect.size()-1 >= 0){ //If the selected vid is not the last vid
-        	// Remove the selected video
-        	sideEffect.remove(0);
-    		App.getOriginOfSideEffect().removeVideo(App.getOriginOfSideEffect().getVideo(0));
-    		// Play the next video
-        	webviewVideo.getEngine().load(App.getOriginOfSideEffect().getVideo(0).getUrlVideo());
-        	labelTitre.setText(sideEffect.get(0));
-        	OriginOfSideEffect.setItems(sideEffect);
-    	} else if (select >= 0 && sideEffect.size()-1 == 0 && select <= sideEffect.size()-1){
-        	sideEffect.remove(0);
-    		App.getOriginOfSideEffect().removeVideo(App.getOriginOfSideEffect().getVideo(0));
-    		webviewVideo.getEngine().load(null);
-    		labelTitre.setText("");
-    	}
-    	OriginOfSideEffect.setItems(sideEffect);
-    }
-
-    ////////////////////////////////////////////////////////// Téléchargements //////////////////////////////////////////////////////////////////
-
-    public void telechargerFav(ActionEvent m){
-    	int select;
-    	select = UsefulMedecine.getSelectionModel().getSelectedIndex();
-    	if (select >=0){
-        	webviewVideo.getEngine().load(App.getUsefulMedecine().getVideo(select).getUrlVideo());
-        	labelTitre.setText(itemsMedecine.get(select));
-    	}
-    }
-
-    public void telechargerRes(ActionEvent m){
-    	int select;
-    	select = ProvokedDiseases.getSelectionModel().getSelectedIndex();
-    	if(select >= 0){
-    		sideEffect.add(videos.getVideo(select).getTitle());
-    		App.getOriginOfSideEffect().addVideo(videos.getVideo(select));
-    	}
-    	OriginOfSideEffect.setItems(sideEffect);
-    }
-
-    public void telechargerPlay(ActionEvent m){
-    	int select;
-    	select = OriginOfSideEffect.getSelectionModel().getSelectedIndex();
-    	if(select >= 0){
-    		sideEffect.add(videos.getVideo(select).getTitle());
-    		App.getOriginOfSideEffect().addVideo(videos.getVideo(select));
-    	}
-    	OriginOfSideEffect.setItems(sideEffect);
-    }
 }
