@@ -33,6 +33,10 @@ public class Interface implements Initializable{
 	private ArrayList<String> origin;
 	private HashMap<String,ArrayList<String>> results;
 
+	private ObservableList<String> diseases;
+	private ObservableList<String> sideEffect;
+	private ObservableList<String> medecine;
+
     private String userInput;
 
     @FXML
@@ -92,13 +96,9 @@ public class Interface implements Initializable{
 
 
 	public void initialize(URL arg0, ResourceBundle arg1) {
-	    Diseases.setItems(items);
-	    SideEffect.setItems(itemsSE);
-	    App.getUsefulMedecine().loadVideos(App.getPathUsefulMedecine());
-	    for ( Video fav : App.getUsefulMedecine() ){
-	    	itemsMedecine.add(fav.getTitle());
-	    }
-	    UsefulMedecine.setItems(itemsMedecine);
+		Diseases.setItems(diseases);
+	    SideEffect.setItems(sideEffect);
+	    Medecine.setItems(medecine);
     }
 
     public void setMain(App App) {
