@@ -12,7 +12,7 @@
    <bottom>
       <TabPane prefHeight="488.0" prefWidth="823.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab fx:id="Diseases" text="Provoked diseases ">
+          <Tab fx:id="Dis" text="Provoked diseases ">
             <content>
                   <AnchorPane>
                      <children>
@@ -21,7 +21,7 @@
                   </AnchorPane>
             </content>
           </Tab>
-            <Tab fx:id="Medecine" text="Useful medecine">
+            <Tab fx:id="Med" text="Useful medecine">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -29,7 +29,7 @@
                      </children></AnchorPane>
               </content>
             </Tab>
-          <Tab fx:id="SideEffect" text="Origin of side effects">
+          <Tab fx:id="SE" text="Origin of side effects">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>

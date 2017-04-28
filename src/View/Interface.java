@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import body.ResultsLists;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -17,6 +18,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -49,22 +54,31 @@ public class Interface implements Initializable{
     private TextField UserInput;
 
     @FXML
-    public ListView<String> Diseases;
+    public TableView<String> Diseases;
 
     @FXML
-    public ListView<String> Medecine;
+    public TableView<String> Medecine;
 
     @FXML
-    public ListView<String> SideEffect;
+    public TableView<String> SideEffect;
 
     @FXML
-    public ListView<String> OriginOfSideEffect;
+    public TableView<String> OriginOfSideEffect;
 
     @FXML
-    public ListView<String> OriginOfMedecine;
+    public TableView<String> OriginOfMedecine;
 
     @FXML
-    public ListView<String> OriginOfDisease;
+    public TableView<String> OriginOfDisease;
+
+    @FXML
+    Tab Dis = new Tab();
+
+    @FXML
+    Tab Med = new Tab();
+
+    @FXML
+    Tab SE = new Tab();
 
 
 	ArrayList<String> disease;
@@ -137,6 +151,25 @@ public class Interface implements Initializable{
 	    OriginOfSideEffect.setItems(oOriginSE);
 	    OriginOfMedecine.setItems(oOringinMedecine);
 	    OriginOfDisease.setItems(oOrigin);
+	    TableColumn<String,String> firstNameColDis = new TableColumn<String,String>("Name");
+	    firstNameColDis.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+	    TableColumn<String,String> secNameColDis = new TableColumn<String,String>("Origin of the data");
+	    secNameColDis.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+	    Diseases.getColumns().addAll(firstNameColDis);
+	    OriginOfDisease.getColumns().addAll(secNameColDis);
+	    TableColumn<String,String> firstNameColSE = new TableColumn<String,String>("Name");
+	    firstNameColSE.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+	    TableColumn<String,String> secNameColSE = new TableColumn<String,String>("Origin of the data");
+	    secNameColSE.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+	    SideEffect.getColumns().addAll(firstNameColSE);
+	    OriginOfSideEffect.getColumns().addAll(secNameColSE);
+	    TableColumn<String,String> firstNameColMed = new TableColumn<String,String>("Name");
+	    firstNameColMed.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+	    TableColumn<String,String> secNameColMed = new TableColumn<String,String>("Origin of the data");
+	    secNameColMed.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
+	    Medecine.getColumns().addAll(firstNameColDis);
+	    OriginOfMedecine.getColumns().addAll(secNameColDis);
+	    Med.getColumns().addAll(firstNameColMed, secNameColMed);
     }
 
 	public ArrayList<String> normalize(ArrayList<ArrayList<String>> originA){
