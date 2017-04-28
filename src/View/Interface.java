@@ -31,14 +31,17 @@ public class Interface implements Initializable{
 
 	private ArrayList<String> nameDisease;
 	private ArrayList<ArrayList<String>> origin;
+	private ArrayList<String> normOrigin;
 
 	private HashMap<String,ArrayList<String>> results;
 
 	private ArrayList<String> nameSideEffect;
 	private ArrayList<ArrayList<String>> originSE;
+	private ArrayList<String> normOriginSE;
 
 	private ArrayList<String> nameMedecine;
 	private ArrayList<ArrayList<String>> originMedecine;
+	private ArrayList<String> normOriginMed;
 
     private String userInput;
 
@@ -53,6 +56,15 @@ public class Interface implements Initializable{
 
     @FXML
     public ListView<String> SideEffect;
+
+    @FXML
+    public ListView<String> OriginOfSideEffect;
+
+    @FXML
+    public ListView<String> OriginOfMedecine;
+
+    @FXML
+    public ListView<String> OriginOfDisease;
 
 
 	ArrayList<String> disease;
@@ -75,6 +87,10 @@ public class Interface implements Initializable{
 		dispDiseases(possibleDiseases);
 		dispSideEffect(possibleOriginOfSideEffect);
 		dispMedecine(usefulMedecines);
+
+		normOriginMed = normalize(originMedecine);
+		normOriginSE = normalize(originSE);
+		normOrigin = normalize(origin);
 
 	}
 
@@ -112,10 +128,29 @@ public class Interface implements Initializable{
 		ObservableList<String> oNameDisease = FXCollections.observableArrayList(nameDisease);
 		ObservableList<String> oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
 		ObservableList<String> oNameMedecine = FXCollections.observableArrayList(nameMedecine);
+		ObservableList<String> oOriginSE = FXCollections.observableArrayList(normOriginSE);
+		ObservableList<String> oOrigin = FXCollections.observableArrayList(normOrigin);
+		ObservableList<String> oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
 		Diseases.setItems(oNameDisease);
 	    SideEffect.setItems(oNameSideEffect);
 	    Medecine.setItems(oNameMedecine);
+	    OriginOfSideEffect.setItems(oOriginSE);
+	    OriginOfMedecine.setItems(oOringinMedecine);
+	    OriginOfDisease.setItems(oOrigin);
     }
+
+	public ArrayList<String> normalize(ArrayList<ArrayList<String>> originA){
+		ArrayList<String> normOriginA = new ArrayList<String>();
+		for(ArrayList<String> list : originA){
+			StringBuilder sb = new StringBuilder();
+			for (String s : list){
+			    sb.append(s);
+			    sb.append(", ");
+			}
+			normOriginA.add(sb.toString());
+		}
+		return normOriginA;
+	}
 
     public void setMain(App App) {
     	this.App = App;
