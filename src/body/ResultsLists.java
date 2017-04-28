@@ -9,13 +9,13 @@ import java.util.Map.Entry;
 
 public class ResultsLists {
 
-	
-	HashMap<String,ArrayList<String>> hashmap;
-	
+
+	public HashMap<String,ArrayList<String>> hashmap;
+
 	public ResultsLists(){
 		hashmap=new HashMap<String,ArrayList<String>>();
 	}
-	
+
 	/*we add a results to the result list*/
 	public void add(String name,String origin){
 		if (hashmap.containsKey(name)){
@@ -29,19 +29,19 @@ public class ResultsLists {
 			hashmap.put(name,originList);
 		}
 	}
-	
-	
+
+
 	public HashMap<String,ArrayList<String>> getHashmap(){
 		return hashmap;
 	}
-	
+
 	public  List<Entry<String, ArrayList<String>>> sortHashMap(){
 		 final List<Entry<String, ArrayList<String>>> entries = new ArrayList<Entry<String, ArrayList<String>>>(hashmap.entrySet());
-		 
+
 		  // Tri de la liste sur la valeur de l'entrée
 		  Collections.sort(entries, new Comparator<Entry<String, ArrayList<String>>>() {
 		    public int compare(final Entry<String, ArrayList<String>> e1, final Entry<String, ArrayList<String>> e2) {
-		    	
+
 		    	/*here i inverse results in ortder to make order entries from the the highest to the lowest*/
 			    	if(((Integer)e1.getValue().size()).compareTo((Integer)(e2.getValue().size()))==-1){
 			    		return 1;
@@ -53,12 +53,12 @@ public class ResultsLists {
 			    		return  ((Integer)e1.getValue().size()).compareTo((Integer)(e2.getValue().size()));
 			    	}
 		    	}
-		     
+
 		    });
 		  return entries;
 	}
-	
-	
+
+
 	public String toStringArrayList(ArrayList<String> array){
 		String s="";
 		for (String s1:array){
@@ -66,7 +66,7 @@ public class ResultsLists {
 		}
 		return s;
 	}
-	
+
 	public String toString(){
 		String returnedString="";
 		List<Entry<String, ArrayList<String>>> entries=sortHashMap();
@@ -75,12 +75,11 @@ public class ResultsLists {
 			 returnedString= returnedString+ i+"- : "+entry.getKey() + " : " + entry.getValue().size()+"\n"
 					 		+toStringArrayList(entry.getValue());
 			   i++;
-			  }		
+			  }
 		return returnedString;
-		
+
 	}
 
 }
 
 
-	
