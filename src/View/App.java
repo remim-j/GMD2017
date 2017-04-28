@@ -50,7 +50,7 @@ public class App extends Application {
 
 
 	/**
- 	* Shows the person overview inside the root layout.
+ 	* Load the scene.
  	*/
 	public void showPersonOverview() {
     	try {

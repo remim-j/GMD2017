@@ -17,6 +17,8 @@
                   <AnchorPane>
                      <children>
                         <ListView fx:id="Resultats" layoutX="14.0" layoutY="11.0" prefHeight="429.0" prefWidth="787.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="10.0" />
+                        <ListView fx:id="Diseases" layoutX="42.0" layoutY="55.0" prefHeight="200.0" prefWidth="200.0" />
+                        <ListView fx:id="OriginOfDisease" layoutX="369.0" layoutY="55.0" prefHeight="200.0" prefWidth="200.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -26,6 +28,8 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <ListView fx:id="Favoris" layoutX="14.0" layoutY="11.0" prefHeight="429.0" prefWidth="785.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="10.0" />
+                        <ListView fx:id="Medecine" layoutX="52.0" layoutY="58.0" prefHeight="200.0" prefWidth="200.0" />
+                        <ListView fx:id="OriginOfMedecine" layoutX="396.0" layoutY="58.0" prefHeight="200.0" prefWidth="200.0" />
                      </children></AnchorPane>
               </content>
             </Tab>
@@ -34,6 +38,8 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <ListView fx:id="Playlist" prefHeight="429.0" prefWidth="786.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="22.0" AnchorPane.topAnchor="10.0" />
+                        <ListView fx:id="SideEffect" layoutX="100.0" layoutY="77.0" prefHeight="200.0" prefWidth="200.0" />
+                        <ListView fx:id="OriginOfSideEffect" layoutX="463.0" layoutY="77.0" prefHeight="200.0" prefWidth="200.0" />
                      </children></AnchorPane>
             </content>
           </Tab>

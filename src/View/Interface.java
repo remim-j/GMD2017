@@ -54,22 +54,22 @@ public class Interface implements Initializable{
     private TextField UserInput;
 
     @FXML
-    public TableView<String> Diseases;
+    public ListView<String> Diseases;
 
     @FXML
-    public TableView<String> Medecine;
+    public ListView<String> Medecine;
 
     @FXML
-    public TableView<String> SideEffect;
+    public ListView<String> SideEffect;
 
     @FXML
-    public TableView<String> OriginOfSideEffect;
+    public ListView<String> OriginOfSideEffect;
 
     @FXML
-    public TableView<String> OriginOfMedecine;
+    public ListView<String> OriginOfMedecine;
 
     @FXML
-    public TableView<String> OriginOfDisease;
+    public ListView<String> OriginOfDisease;
 
     @FXML
     Tab Dis = new Tab();
@@ -151,25 +151,6 @@ public class Interface implements Initializable{
 	    OriginOfSideEffect.setItems(oOriginSE);
 	    OriginOfMedecine.setItems(oOringinMedecine);
 	    OriginOfDisease.setItems(oOrigin);
-	    TableColumn<String,String> firstNameColDis = new TableColumn<String,String>("Name");
-	    firstNameColDis.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-	    TableColumn<String,String> secNameColDis = new TableColumn<String,String>("Origin of the data");
-	    secNameColDis.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-	    Diseases.getColumns().addAll(firstNameColDis);
-	    OriginOfDisease.getColumns().addAll(secNameColDis);
-	    TableColumn<String,String> firstNameColSE = new TableColumn<String,String>("Name");
-	    firstNameColSE.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-	    TableColumn<String,String> secNameColSE = new TableColumn<String,String>("Origin of the data");
-	    secNameColSE.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-	    SideEffect.getColumns().addAll(firstNameColSE);
-	    OriginOfSideEffect.getColumns().addAll(secNameColSE);
-	    TableColumn<String,String> firstNameColMed = new TableColumn<String,String>("Name");
-	    firstNameColMed.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-	    TableColumn<String,String> secNameColMed = new TableColumn<String,String>("Origin of the data");
-	    secNameColMed.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue()));
-	    Medecine.getColumns().addAll(firstNameColDis);
-	    OriginOfMedecine.getColumns().addAll(secNameColDis);
-	    Med.getColumns().addAll(firstNameColMed, secNameColMed);
     }
 
 	public ArrayList<String> normalize(ArrayList<ArrayList<String>> originA){
