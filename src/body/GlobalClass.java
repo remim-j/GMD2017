@@ -71,7 +71,7 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 
 			/*we create a thread which will do this task*/
 			//ExecutorService executorService1 = Executors.newFixedThreadPool(NUM_CORES);
-			ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
+			final ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
 
 
 			ArrayList<String> idOriginOfSideEffectFromSider=AccesSider.idMedocCauseEffetSecondaire(userInput);
@@ -83,7 +83,7 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 			     //   System.out.println("Asynchronous task 2");
 			        if (idOriginOfSideEffectFromSider !=null){
 							// ExecutorService executorService1 = Executors.newFixedThreadPool(NUM_CORES);
-								    for(String s : idOriginOfSideEffectFromSider){
+								    for(final String s : idOriginOfSideEffectFromSider){
 										Future future11 = executorService.submit(new Runnable() {
 							 				public void run() {
 							 					String originOfSideEffectName=ReadStitch.getATCNameByStitchID(s);
@@ -99,9 +99,9 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 
 
 
-					ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
-					ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name",userInput);
-					ArrayList<String> diseaseNameFromOrpha=AccesOrphaDataBase.GetDeseaseByClinicalSign(userInput);
+					final ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
+					final ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name",userInput);
+					final ArrayList<String> diseaseNameFromOrpha=AccesOrphaDataBase.GetDeseaseByClinicalSign(userInput);
 
 
 	       	//	ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
@@ -165,7 +165,7 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 			   //  ExecutorService executorService = Executors.newFixedThreadPool(NUM_CORES);
 				 List<Future<?>> futures3  = new LinkedList<Future<?>>();
 	             if (cuiMedecineOmimOnto!=null){
-						for (String s:cuiMedecineOmimOnto){
+						for (final String s:cuiMedecineOmimOnto){
 							Future future11 = executorService.submit(new Runnable() {
 							public void run() {
 									try{
@@ -173,7 +173,7 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 										if (stitchId!=null){
 											 ExecutorService executorService111 = Executors.newFixedThreadPool(1);
 
-											for (String s1:stitchId){
+											for (final String s1:stitchId){
 
 												Future future111 = executorService111.submit(new Runnable() {
 													public void run() {
@@ -215,15 +215,15 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 
 			    // ExecutorService executorService3Bis = Executors.newFixedThreadPool(NUM_CORES);
 
-				 List<Future<?>> futures3Bis  = new LinkedList<Future<?>>();
+				 final List<Future<?>> futures3Bis  = new LinkedList<Future<?>>();
 	             if (cuiMedecineOmimOnto!=null){
-	 				for (String s:cuiMedecineOmimOnto){
+	 				for (final String s:cuiMedecineOmimOnto){
 	 					Future future11 = executorService.submit(new Runnable() {
 							public void run() {
 									try{
 										ArrayList<String> sideEffectStitchID=AccesSider.idMedocCauseEffetSecondaire(s);
 					 		             if (sideEffectStitchID !=null){
-					 						for (String s1:sideEffectStitchID){
+					 						for (final String s1:sideEffectStitchID){
 					 							Future future111 = executorService.submit(new Runnable() {
 					 								public void run() {
 
@@ -255,7 +255,7 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 				 List<Future<?>> futures4 = new LinkedList<Future<?>>();
 
 	       	 if (diseaseIdFromOrpha != null){
-	 				for (String s:diseaseIdFromOrpha ){
+	 				for (final String s:diseaseIdFromOrpha ){
 	 					Future future11 = executorService.submit(new Runnable() {
 							public void run() {
 								try {
@@ -527,3 +527,4 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 	}
 	*/
 }
+
