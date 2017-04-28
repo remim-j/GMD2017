@@ -29,13 +29,16 @@ public class Interface implements Initializable{
 	private ResultsLists possibleOriginOfSideEffect =new  ResultsLists();
 	private ResultsLists usefulMedecines =new  ResultsLists();
 
-	private String name;
-	private ArrayList<String> origin;
+	private ArrayList<String> nameDisease;
+	private ArrayList<ArrayList<String>> origin;
+
 	private HashMap<String,ArrayList<String>> results;
 
-	private ObservableList<String> diseases;
-	private ObservableList<String> sideEffect;
-	private ObservableList<String> medecine;
+	private ArrayList<String> nameSideEffect;
+	private ArrayList<ArrayList<String>> originSE;
+
+	private ArrayList<String> nameMedecine;
+	private ArrayList<ArrayList<String>> originMedecine;
 
     private String userInput;
 
@@ -78,27 +81,40 @@ public class Interface implements Initializable{
 ////////////////////////////////////////////////////////////////Displaying the results ////////////////////////////////////////////////////////////
 
     private void dispMedecine(ResultsLists usefulMedecines2) {
-		// TODO Auto-generated method stub
+    	HashMap<String,ArrayList<String>> hashMap = usefulMedecines2.hashmap;
+    	for (String mapKey : hashMap.keySet()) {
+    		originMedecine.add(hashMap.get(mapKey));
+    		nameMedecine.add(mapKey);
+    	}
 
 	}
 
 
 	private void dispSideEffect(ResultsLists possibleOriginOfSideEffect2) {
-		// TODO Auto-generated method stub
-
+		HashMap<String,ArrayList<String>> hashMap = possibleOriginOfSideEffect2.hashmap;
+    	for (String mapKey : hashMap.keySet()) {
+    		originSE.add(hashMap.get(mapKey));
+    		nameSideEffect.add(mapKey);
+    	}
 	}
 
 
 	private void dispDiseases(ResultsLists possibleDiseases2) {
-		// TODO Auto-generated method stub
-
+		HashMap<String,ArrayList<String>> hashMap = possibleDiseases2.hashmap;
+    	for (String mapKey : hashMap.keySet()) {
+    		origin.add(hashMap.get(mapKey));
+    		nameDisease.add(mapKey);
+    	}
 	}
 
 
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		Diseases.setItems(diseases);
-	    SideEffect.setItems(sideEffect);
-	    Medecine.setItems(medecine);
+		ObservableList<String> oNameDisease = FXCollections.observableArrayList(nameDisease);
+		ObservableList<String> oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
+		ObservableList<String> oNameMedecine = FXCollections.observableArrayList(nameMedecine);
+		Diseases.setItems(oNameDisease);
+	    SideEffect.setItems(oNameSideEffect);
+	    Medecine.setItems(oNameMedecine);
     }
 
     public void setMain(App App) {
