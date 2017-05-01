@@ -35,7 +35,7 @@ public class App extends Application {
     	try {
         	// Load root layout from fxml file.
         	FXMLLoader loader = new FXMLLoader();
-        	loader.setLocation(App.class.getResource("RootLayout.fxml"));
+        	loader.setLocation(App.class.getResource("View/RootLayout.fxml"));
         	rootLayout = (BorderPane) loader.load();
 
 
@@ -56,7 +56,7 @@ public class App extends Application {
     	try {
         	// Load person overview.
         	FXMLLoader loaderRecherche = new FXMLLoader();
-        	loaderRecherche.setLocation(App.class.getResource("Interface.fxml"));
+        	loaderRecherche.setLocation(App.class.getResource("View/Interface.fxml"));
         	BorderPane rechercheOverview = (BorderPane) loaderRecherche.load();
 
         	// Set search bar into the top of root layout.
