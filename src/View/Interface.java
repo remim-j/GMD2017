@@ -3,42 +3,30 @@ package View;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import body.ResultsLists;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.web.WebView;
+
+import View.App;
 
 public class Interface implements Initializable{
 
-	private ResultsLists possibleDiseases =new  ResultsLists();
-	private ResultsLists possibleOriginOfSideEffect =new  ResultsLists();
-	private ResultsLists usefulMedecines =new  ResultsLists();
+	private ResultsLists possibleDiseases = new  ResultsLists();
+	private ResultsLists possibleOriginOfSideEffect = new  ResultsLists();
+	private ResultsLists usefulMedecines = new  ResultsLists();
 
 	private ArrayList<String> nameDisease;
 	private ArrayList<ArrayList<String>> origin;
 	private ArrayList<String> normOrigin;
 
-	private HashMap<String,ArrayList<String>> results;
 
 	private ArrayList<String> nameSideEffect;
 	private ArrayList<ArrayList<String>> originSE;
@@ -71,19 +59,9 @@ public class Interface implements Initializable{
     @FXML
     public ListView<String> OriginOfDisease;
 
-    @FXML
-    Tab Dis = new Tab();
-
-    @FXML
-    Tab Med = new Tab();
-
-    @FXML
-    Tab SE = new Tab();
-
-
 	ArrayList<String> disease;
 
-	private App App;
+	public App App;
 
 
 	public void bouton(ActionEvent e){	//Get the input of the user, and launch the research
@@ -105,6 +83,7 @@ public class Interface implements Initializable{
 		normOriginMed = normalize(originMedecine);
 		normOriginSE = normalize(originSE);
 		normOrigin = normalize(origin);
+
 
 	}
 
@@ -139,19 +118,13 @@ public class Interface implements Initializable{
 
 
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		ObservableList<String> oNameDisease = FXCollections.observableArrayList(nameDisease);
-		ObservableList<String> oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
-		ObservableList<String> oNameMedecine = FXCollections.observableArrayList(nameMedecine);
-		ObservableList<String> oOriginSE = FXCollections.observableArrayList(normOriginSE);
-		ObservableList<String> oOrigin = FXCollections.observableArrayList(normOrigin);
-		ObservableList<String> oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
-		Diseases.setItems(oNameDisease);
-	    SideEffect.setItems(oNameSideEffect);
-	    Medecine.setItems(oNameMedecine);
-	    OriginOfSideEffect.setItems(oOriginSE);
-	    OriginOfMedecine.setItems(oOringinMedecine);
-	    OriginOfDisease.setItems(oOrigin);
+
     }
+
+    public void setMain(App App) {
+    	this.App = App;
+	}
+
 
 	public ArrayList<String> normalize(ArrayList<ArrayList<String>> originA){
 		ArrayList<String> normOriginA = new ArrayList<String>();
@@ -166,8 +139,18 @@ public class Interface implements Initializable{
 		return normOriginA;
 	}
 
-    public void setMain(App App) {
-    	this.App = App;
+	public void Recherche(){
+		ObservableList<String> oNameDisease = FXCollections.observableArrayList(nameDisease);
+		ObservableList<String> oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
+		ObservableList<String> oNameMedecine = FXCollections.observableArrayList(nameMedecine);
+		ObservableList<String> oOriginSE = FXCollections.observableArrayList(normOriginSE);
+		ObservableList<String> oOrigin = FXCollections.observableArrayList(normOrigin);
+		ObservableList<String> oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
+		Diseases.setItems(oNameDisease);
+	    SideEffect.setItems(oNameSideEffect);
+	    Medecine.setItems(oNameMedecine);
+	    OriginOfSideEffect.setItems(oOriginSE);
+	    OriginOfMedecine.setItems(oOringinMedecine);
+	    OriginOfDisease.setItems(oOrigin);
 	}
-
 }

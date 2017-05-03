@@ -15,16 +15,33 @@ public class App extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	public String userInput;
 
 
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage primaryStage){
     	this.primaryStage = primaryStage;
     	this.primaryStage.setTitle("GMD 2017");
 
+    	try {
+        	// Load overview.
+        	FXMLLoader loader = new FXMLLoader();
+        	loader.setLocation(App.class.getResource("Interface.fxml"));
+        	BorderPane recherche = (BorderPane) loader.load();
 
-    	showPersonOverview();
+        	// Set search bar into the top of root layout.
+        	Scene scene = new Scene(recherche);
+        	primaryStage.setScene(scene);
+        	primaryStage.show();
+
+
+        	// Give the controller access to the main app.
+        	Interface Recherche = loader.getController();
+        	Recherche.setMain(this);
+
+    	} catch (IOException e) {
+        	e.printStackTrace();
+    	}
+
 	}
 
 
@@ -35,7 +52,7 @@ public class App extends Application {
     	try {
         	// Load root layout from fxml file.
         	FXMLLoader loader = new FXMLLoader();
-        	loader.setLocation(App.class.getResource("View/RootLayout.fxml"));
+        	loader.setLocation(App.class.getResource("RootLayout.fxml"));
         	rootLayout = (BorderPane) loader.load();
 
 
@@ -43,32 +60,6 @@ public class App extends Application {
         	Scene scene = new Scene(rootLayout);
         	primaryStage.setScene(scene);
         	primaryStage.show();
-    	} catch (IOException e) {
-        	e.printStackTrace();
-    	}
-	}
-
-
-	/**
- 	* Load the scene.
- 	*/
-	public void showPersonOverview() {
-    	try {
-        	// Load person overview.
-        	FXMLLoader loaderRecherche = new FXMLLoader();
-        	loaderRecherche.setLocation(App.class.getResource("View/Interface.fxml"));
-        	BorderPane rechercheOverview = (BorderPane) loaderRecherche.load();
-
-        	// Set search bar into the top of root layout.
-        	Scene scene = new Scene(rechercheOverview);
-        	primaryStage.setScene(scene);
-        	primaryStage.show();
-
-
-        	// Give the controller access to the main app.
-        	Interface recherche = loaderRecherche.getController();
-        	recherche.setMain(this);
-
     	} catch (IOException e) {
         	e.printStackTrace();
     	}
