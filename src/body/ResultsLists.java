@@ -1,4 +1,5 @@
 package body;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,7 +39,7 @@ public class ResultsLists {
 	public  List<Entry<String, ArrayList<String>>> sortHashMap(){
 		 final List<Entry<String, ArrayList<String>>> entries = new ArrayList<Entry<String, ArrayList<String>>>(hashmap.entrySet());
 
-		  // Tri de la liste sur la valeur de l'entrée
+		  // Tri de la liste sur la valeur de l'entrï¿½e
 		  Collections.sort(entries, new Comparator<Entry<String, ArrayList<String>>>() {
 		    public int compare(final Entry<String, ArrayList<String>> e1, final Entry<String, ArrayList<String>> e2) {
 

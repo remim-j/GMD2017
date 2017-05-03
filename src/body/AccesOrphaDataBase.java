@@ -1,31 +1,19 @@
 package body;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.nio.Buffer;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import com.sun.javafx.scene.paint.GradientUtils.Parser;
 
 
 /*function getDiseaseByClinicalSign :  take as input the name of the symptom
  * and return a list of disease which can provoke this symptom.
  * Here we have to enter the RIGHT symptom or it does not work
- * I didnt find a way to fix it
  */
 
 /*function getDiseaseById : take an id number and return the disease with this id*/

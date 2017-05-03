@@ -1,42 +1,33 @@
 package body;
-import java.io.IOException;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.lucene.queryparser.classic.ParseException;
 
 
 public class GlobalClass {
 
-public static HashMap<String,Integer> provokedDiseases=new HashMap<String,Integer>();
-public static HashMap<String,Integer> originOfSideEffect=new  HashMap<String,Integer>();
-public static HashMap<String,Integer>  usefulMedecine=new HashMap<String,Integer>();
-public static ArrayList<String> suggestedEntry=new ArrayList<String>();
-public static ResultsLists possibleDiseases=new  ResultsLists();
-public static ResultsLists possibleOriginOfSideEffect=new  ResultsLists();
-public static ResultsLists usefulMedecines=new  ResultsLists();
+public static HashMap<String,Integer> provokedDiseases = new HashMap<String,Integer>();
+public static HashMap<String,Integer> originOfSideEffect = new HashMap<String,Integer>();
+public static HashMap<String,Integer> usefulMedecine = new HashMap<String,Integer>();
+public static ArrayList<String> suggestedEntry = new ArrayList<String>();
+public static ResultsLists possibleDiseases = new ResultsLists();
+public static ResultsLists possibleOriginOfSideEffect = new ResultsLists();
+public static ResultsLists usefulMedecines = new ResultsLists();
 
 
-
-
-	static Scanner sc=  new Scanner(System.in);
+	static Scanner sc = new Scanner(System.in);
 	public static String userInput;
 	private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 
 	public static void doSearch(String userInput){
-	ArrayList<String> a=new ArrayList<String>();
+	ArrayList<String> a =new ArrayList<String>();
 
 
 		Long startTime=(long) (System.nanoTime());
@@ -527,4 +518,3 @@ public static ResultsLists usefulMedecines=new  ResultsLists();
 	}
 	*/
 }
-

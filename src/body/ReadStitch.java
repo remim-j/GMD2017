@@ -1,8 +1,7 @@
 package body;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -11,7 +10,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -23,10 +21,8 @@ import org.apache.lucene.store.FSDirectory;
 public abstract class ReadStitch {
 	
 	static String ATC_id;
-	
 	private static String index = "index/Stitch";
-private static void ReadStitchIndexBis( String queryString) throws IOException, ParseException {
-		String field="a";
+	private static void ReadStitchIndexBis( String queryString) throws IOException, ParseException {
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
 		Analyzer analyzer = new StandardAnalyzer();

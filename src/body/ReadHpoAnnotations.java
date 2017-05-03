@@ -1,19 +1,17 @@
 package body;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.sqlite.*;
-
 /**
- * This class is the interface with the database.
+ * This class is the interface with the database.
  * Take "HP:xxxxxxx" String as an argument
  * Return disease_id (for ex : 215510)
- **/
+ **/
 
 public abstract class ReadHpoAnnotations{
 
@@ -22,8 +20,8 @@ public abstract class ReadHpoAnnotations{
 	private static PreparedStatement statement;
 
 	/**
-     * dbName is the name of the database
-     **/
+    * dbName is the name of the database
+    **/
 
 	public static void ReadHpoAnnotations (){
 
@@ -40,9 +38,9 @@ public abstract class ReadHpoAnnotations{
 	}
 
 	/**
-     * true = database opened
-     *
-     */
+    * true = database opened
+    *
+    */
 
 	public static boolean connect (){
 		try{
@@ -61,9 +59,9 @@ public abstract class ReadHpoAnnotations{
 		}
 
 	/**
-     * true = connection closed
-     *
-     */
+    * true = connection closed
+    *
+    */
 
 	public static boolean disconnect (){
 
@@ -78,23 +76,23 @@ public abstract class ReadHpoAnnotations{
 		}
 
 	/**
-     * The SQL statement
-     * @param is the SQL statement which ends with a ";"
-     * @return a ResultSet containing the result of the statement
-     */
+    * The SQL statement
+    * @param is the SQL statement which ends with a ";"
+    * @return a ResultSet containing the result of the statement
+    */
 
-	public ResultSet getResultOf (String requete){
-		try{
+	public ResultSet getResultOf (String requete){ 
+		try {
 			//statement=this.connection.prepareStatement(requette)
 			return this.statement.executeQuery(requete);
-		}catch (SQLException e){
+		} catch (SQLException e){
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
 	
-	public static ArrayList<String> getDiseaseLabelBySignId(String signID ) throws Exception{
+	public static ArrayList<String> getDiseaseLabelBySignId(String signID) throws Exception {
 		connect();
 		String myQuery="SELECT disease_label "
 						+ "FROM phenotype_annotation "
@@ -174,7 +172,5 @@ public abstract class ReadHpoAnnotations{
 			e.printStackTrace();
 		}
 	}
-	
 		
 }
-
