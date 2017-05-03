@@ -12,7 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
-
+import body.*;
 import javafx.scene.control.TextField;
 
 import View.App;
@@ -59,22 +59,29 @@ public class Interface implements Initializable{
     @FXML
     public ListView<String> OriginOfDisease;
 
-	ArrayList<String> disease;
+	ArrayList<String> disease=new ArrayList<String>();
+	
+	body.GlobalClass globalClass=new GlobalClass();
 
 	public App App;
 
 
 	public void bouton(ActionEvent e){	//Get the input of the user, and launch the research
+		
+		/*clear last search*/
+		clearItems();
 		userInput = UserInput.getText();
-		body.GlobalClass.userInput = userInput;
+		//body.GlobalClass.userInput = userInput;
+		
+		globalClass.doSearch(userInput);
 		int n = disease.size();		//Initializing the arrayList
 		for ( int i = 0; i < n; i++){
-			disease.remove(0);
+			disease.remove(i);
 		}
-
-		possibleDiseases = body.GlobalClass.possibleDiseases;
-		possibleOriginOfSideEffect = body.GlobalClass.possibleOriginOfSideEffect;
-		usefulMedecines = body.GlobalClass.usefulMedecines;
+		
+		possibleDiseases = globalClass.getPossibleDiseases();
+		possibleOriginOfSideEffect = globalClass.getPossibleOriginOfSideEffect();
+		usefulMedecines = globalClass.getUsefulMedecines();
 
 		dispDiseases(possibleDiseases);
 		dispSideEffect(possibleOriginOfSideEffect);
@@ -84,7 +91,9 @@ public class Interface implements Initializable{
 		normOriginSE = normalize(originSE);
 		normOrigin = normalize(origin);
 
-
+		setItems();
+		System.out.println("J'ai fini");
+		
 	}
 
 ////////////////////////////////////////////////////////////////Displaying the results ////////////////////////////////////////////////////////////
@@ -109,7 +118,7 @@ public class Interface implements Initializable{
 
 
 	private void dispDiseases(ResultsLists possibleDiseases2) {
-		HashMap<String,ArrayList<String>> hashMap = possibleDiseases2.hashmap;
+		HashMap<String,ArrayList<String>> hashMap = possibleDiseases2.getHashmap();
     	for (String mapKey : hashMap.keySet()) {
     		origin.add(hashMap.get(mapKey));
     		nameDisease.add(mapKey);
@@ -123,34 +132,64 @@ public class Interface implements Initializable{
 
     public void setMain(App App) {
     	this.App = App;
+    	
+    	//initialize all variables
+    	 nameDisease=new ArrayList<String>();
+    	origin =new ArrayList<ArrayList<String>>();
+    	normOrigin=new ArrayList<String>();
+
+
+    	 nameSideEffect=new ArrayList<String>();
+    	 originSE=new ArrayList<ArrayList<String>>();;
+    	 normOriginSE=new ArrayList<String>();
+
+    	 nameMedecine=new ArrayList<String>();
+    	 originMedecine=new ArrayList<ArrayList<String>>();;
+    	normOriginMed=new ArrayList<String>();
 	}
 
 
 	public ArrayList<String> normalize(ArrayList<ArrayList<String>> originA){
 		ArrayList<String> normOriginA = new ArrayList<String>();
-		for(ArrayList<String> list : originA){
-			StringBuilder sb = new StringBuilder();
-			for (String s : list){
-			    sb.append(s);
-			    sb.append(", ");
+		if(originA != null){
+			for(ArrayList<String> list : originA){
+				StringBuilder sb = new StringBuilder();
+				for (String s : list){
+				    sb.append(s);
+				    sb.append(", ");
+				}
+				normOriginA.add(sb.toString());
 			}
-			normOriginA.add(sb.toString());
 		}
+		
 		return normOriginA;
 	}
 
-	public void Recherche(){
+	public void setItems(){
 		ObservableList<String> oNameDisease = FXCollections.observableArrayList(nameDisease);
 		ObservableList<String> oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
 		ObservableList<String> oNameMedecine = FXCollections.observableArrayList(nameMedecine);
 		ObservableList<String> oOriginSE = FXCollections.observableArrayList(normOriginSE);
 		ObservableList<String> oOrigin = FXCollections.observableArrayList(normOrigin);
 		ObservableList<String> oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
+		
 		Diseases.setItems(oNameDisease);
 	    SideEffect.setItems(oNameSideEffect);
 	    Medecine.setItems(oNameMedecine);
 	    OriginOfSideEffect.setItems(oOriginSE);
 	    OriginOfMedecine.setItems(oOringinMedecine);
 	    OriginOfDisease.setItems(oOrigin);
+	    
+	    
+	}
+	
+	
+	public void clearItems(){
+		Diseases.getItems().clear();
+		SideEffect.getItems().clear();
+		Medecine.getItems().clear();
+		OriginOfSideEffect.getItems().clear();
+		OriginOfMedecine.getItems().clear();
+		OriginOfDisease.getItems().clear();
 	}
 }

@@ -15,7 +15,7 @@ public class App extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-
+	
 
 	@Override
 	public void start(Stage primaryStage){
@@ -35,8 +35,8 @@ public class App extends Application {
 
 
         	// Give the controller access to the main app.
-        	Interface Recherche = loader.getController();
-        	Recherche.setMain(this);
+        	Interface interfaceControler= loader.getController();
+        	interfaceControler.setMain(this);
 
     	} catch (IOException e) {
         	e.printStackTrace();
