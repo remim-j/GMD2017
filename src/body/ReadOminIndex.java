@@ -38,8 +38,8 @@ public class ReadOminIndex {
 	    	writer.close();
 	    	
 	    } catch (IOException e) {
-	      System.out.println(" caught a " + e.getClass() +
-	       "\n with message: " + e.getMessage());
+	    	System.out.println(" caught a " + e.getClass() +
+	    	"\n with message: " + e.getMessage());
 	    }
 	}
 	  
@@ -62,13 +62,12 @@ public class ReadOminIndex {
 					if (first) {
 						first = false;
 					} else {
-						//System.out.println("adding " + file); // to delete later
 						writer.addDocument(doc);
 					}
 					doc = new Document();
 				}
 				
-				// stocker TI
+				// store TI
 				if (line.startsWith("*FIELD* TI")) {
 					n = no.length();
 					line = br.readLine().substring(n+2);
@@ -81,37 +80,29 @@ public class ReadOminIndex {
 						}
 					}
 					doc.add(new StoredField("TI", temp));
-					//System.out.println("TI "+ temp); // to delete later
+					System.out.println("TI "+ temp); // to delete later
 				}
 				
-				// indexer CS and stock CS
-				
+				// index and store CS
 				if (line.startsWith("*FIELD* CS")) {
-					String buff="";
-					line=br.readLine();
-					while (!(line.contains("*FIELD*"))){
-						
-						if(line.endsWith(":") && buff.equals("")==false){
-							buff=buff+";";
+					temp = "";
+					line = br.readLine();
+					while (!(line.contains("*FIELD*"))) {
+						if (line.endsWith(":") && temp.equals("")==false) {
+							temp = temp + ";";
+						} else if (!line.contains(":") && !line.trim().equals("")) {
+							line = line.trim();
+							temp = temp + line;
 						}
-						else if(!line.contains(":") && !line.trim().equals("")){
-							line=line.trim();
-							
-							buff=buff+line;
-
-						}
-						line=br.readLine();	
+						line = br.readLine();
 					}
-					//System.out.println("buf "+buff);
-					doc.add(new TextField("CS", buff, Field.Store.YES));
+					doc.add(new TextField("CS", temp, Field.Store.YES));
 				}
 				
-				
-				// indexer and stocker NO
+				// index and store NO
 				if (line.startsWith("*FIELD* NO")) {
 					no = br.readLine();
 					doc.add(new TextField("NO", no, Field.Store.YES));
-					//System.out.println("NO "+ no); // to delete later
 				}
 	      }
 

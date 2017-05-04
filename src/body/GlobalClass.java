@@ -276,28 +276,31 @@ public static ResultsLists usefulMedecines = new ResultsLists();
 	              * diseaseNameFromOmim.
 	              * We have to check!
 	              */
+	       	 
+	       	 
+	       	 /** beginning Omim.txt **/	       	 
+	       	 ArrayList<String> diseaseIdFromOmim,diseaseFromOmim;
+	       	 
+	       	 ReadOmim.prepareQuery("CS", userInput);
+	       	 diseaseIdFromOmim = ReadOmim.getNO();
 
-			ArrayList<String> diseaseIdFromOmim=ReadOmim.getNO("CS",userInput);
-
-	             if (diseaseIdFromOmim!=null){
-	            	 for (String s :diseaseIdFromOmim){
-							ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
-							for(String s1: diseaseLabelFromHpoAnnot){
-								addDisease(s1);
-								possibleDiseases.add(s1, "Omim + Hpo Annotations");
-							}
-	            	 }
-	             }
-
-	 	       	ArrayList<String> diseaseFromOmim=ReadOmim.getTI("CS",userInput);
-
-
-	             if (diseaseFromOmim!=null){
-	 				for(String s:diseaseFromOmim){
-	 					addDisease(s);
-	 					possibleDiseases.add(s, "Omim");
-	 				}
-	 			}
+	       	 if (diseaseIdFromOmim!=null){
+	       		 for (String s :diseaseIdFromOmim){
+	       			 ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
+	       			 for(String s1: diseaseLabelFromHpoAnnot){
+	       				 addDisease(s1);
+	       				 possibleDiseases.add(s1, "Omim + Hpo Annotations");
+	       			 }
+	       		 }
+	       	 }
+	       	 diseaseFromOmim = ReadOmim.getTI();
+	       	 if (diseaseFromOmim!=null){
+	       		 for(String s:diseaseFromOmim){
+	       			 addDisease(s);
+	       			 possibleDiseases.add(s, "Omim");
+	       		 }
+	       	 }
+	       	 /** end Omim.txt **/
 
 
 

@@ -110,11 +110,13 @@ public abstract class ReadHpoAnnotations{
 		return listeDiseaseLabel;
 	}
 	
-	public static ArrayList<String> getDiseaseLabelByDiseaseId(String deseaseID ) throws Exception{
+	public static ArrayList<String> getDiseaseLabelByDiseaseId(String deseaseID) throws Exception{
 		connect();
 		String myQuery="SELECT disease_label "
 						+ "FROM phenotype_annotation "
 						+ "WHERE disease_id LIKE ? ;";
+		String temp = "";
+		int i = 0;
 		statement =connection.prepareStatement(myQuery);
 		
 		statement.setString(1,"%"+deseaseID+"%");
@@ -124,9 +126,21 @@ public abstract class ReadHpoAnnotations{
 		while (res.next()){
 			String label =res.getString("disease_label");
 			
+			
 			if (!listeDiseaseLabel.contains(label)){/* we avoid to add the same name many times because a 
 			/*desease_id will always match with the same desease_label*/
+				//n = no.length();
+				//label.substring(n+2);
+				temp = "";
+				for (i = 0;i < label.length();i++) {
+					if (label.charAt(i) == ';') {
+						break;
+					} else {
+						temp = temp + label.charAt(i);
+					}
+				}
 				listeDiseaseLabel.add(label);
+				System.out.println(label);
 
 			}
 		}
@@ -161,7 +175,7 @@ public abstract class ReadHpoAnnotations{
 					//System.out.println(s);
 					ArrayList<String> diseaseLabelFromHpoAnnotation=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
 					for (String s2 : diseaseLabelFromHpoAnnotation){
-						System.out.println(s+ "  :  "+s2);
+						//System.out.println(s+ "  :  "+s2);
 					}
 				}
 			}
