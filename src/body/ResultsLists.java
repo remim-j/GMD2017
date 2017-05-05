@@ -80,6 +80,10 @@ public class ResultsLists {
 		return returnedString;
 
 	}
+	
+	public void clear(){
+		hashmap.clear();
+	}
 
 }
 

@@ -140,7 +140,7 @@ public abstract class ReadHpoAnnotations{
 					}
 				}
 				listeDiseaseLabel.add(label);
-				System.out.println(label);
+				//System.out.println(label);
 
 			}
 		}

@@ -185,9 +185,14 @@ public class Interface implements Initializable{
 	
 	
 	public void clearItems(){
+		
+		globalClass.clearList();
 		Diseases.getItems().clear();
+		Diseases.refresh();
 		SideEffect.getItems().clear();
+		SideEffect.refresh();
 		Medecine.getItems().clear();
+		Medecine.refresh();
 		OriginOfSideEffect.getItems().clear();
 		OriginOfMedecine.getItems().clear();
 		OriginOfDisease.getItems().clear();

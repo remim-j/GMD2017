@@ -79,12 +79,27 @@ public abstract class ReadOmim {
 		ReadOmim(field, query);
 	}
 	
-	public static ArrayList<String> getTI() {
-		return symptomTI;
+	public static ArrayList<String> getTI(String field,String query) {
+		try {
+			ReadOmim(field, query);
+			return symptomTI;
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	public static ArrayList<String> getNO() {
-		return symptomNO;
+	public static ArrayList<String> getNO(String field,String query) {
+		try {
+			ReadOmim(field, query);
+			return symptomNO;
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
 	}
 	
 }
