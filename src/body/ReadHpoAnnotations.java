@@ -17,7 +17,7 @@ public abstract class ReadHpoAnnotations{
 
 	private static String dbName;
 	public static Connection connection;
-	private static PreparedStatement statement;
+	//private static PreparedStatement statement;
 
 	/**
     * dbName is the name of the database
@@ -81,23 +81,16 @@ public abstract class ReadHpoAnnotations{
     * @return a ResultSet containing the result of the statement
     */
 
-	public ResultSet getResultOf (String requete){ 
-		try {
-			//statement=this.connection.prepareStatement(requette)
-			return this.statement.executeQuery(requete);
-		} catch (SQLException e){
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 	
 	
 	public static ArrayList<String> getDiseaseLabelBySignId(String signID) throws Exception {
 		connect();
+		
 		String myQuery="SELECT disease_label "
 						+ "FROM phenotype_annotation "
 						+ "WHERE sign_id = ? ;";
-		statement =connection.prepareStatement(myQuery);
+		PreparedStatement statement =connection.prepareStatement(myQuery);
 		
 		statement.setString(1,signID);
 		ResultSet res=statement.executeQuery();
@@ -110,43 +103,59 @@ public abstract class ReadHpoAnnotations{
 		return listeDiseaseLabel;
 	}
 	
-	public static ArrayList<String> getDiseaseLabelByDiseaseId(String deseaseID) throws Exception{
-		connect();
-		String myQuery="SELECT disease_label "
-						+ "FROM phenotype_annotation "
-						+ "WHERE disease_id LIKE ? ;";
-		String temp = "";
-		int i = 0;
-		statement =connection.prepareStatement(myQuery);
+	public static String getDiseaseLabelByDiseaseId(String deseaseID) {
 		
-		statement.setString(1,"%"+deseaseID+"%");
-		ResultSet res=statement.executeQuery();
+		try {
+			connect();
+			String myQuery="SELECT disease_label "
+							+ "FROM phenotype_annotation "
+							+ "WHERE disease_id =? ;";
+			
+			PreparedStatement statement =connection.prepareStatement(myQuery);
+			statement.setString(1,deseaseID);
+			ResultSet res=statement.executeQuery();
+					
+			while (res.next()){
+				String label =res.getString("disease_label");
 				
-		ArrayList<String> listeDiseaseLabel=new ArrayList<String>();
-		while (res.next()){
-			String label =res.getString("disease_label");
-			
-			
-			if (!listeDiseaseLabel.contains(label)){/* we avoid to add the same name many times because a 
-			/*desease_id will always match with the same desease_label*/
-				//n = no.length();
-				//label.substring(n+2);
-				temp = "";
-				for (i = 0;i < label.length();i++) {
-					if (label.charAt(i) == ';') {
-						break;
-					} else {
-						temp = temp + label.charAt(i);
-					}
-				}
-				listeDiseaseLabel.add(label);
-				//System.out.println(label);
-
+				return label;
+				
 			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return listeDiseaseLabel;
+		
+		return null;
 	}
 	
+	public static String getDiseaseIdByLabel(String diseaseLabel){
+		
+		try {
+			connect();
+			String myQuery="SELECT disease_id "
+							+ "FROM phenotype_annotation "
+							+ "WHERE disease_label = ?;";
+			
+			PreparedStatement statement =connection.prepareStatement(myQuery);
+			statement.setString(1,diseaseLabel);
+			ResultSet res=statement.executeQuery();
+					
+			
+			while (res.next()){
+				String label =res.getString("disease_id");
+				return label;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+		
+		
+	}
 	
 	public static void main (String[] args){
 		
@@ -173,10 +182,10 @@ public abstract class ReadHpoAnnotations{
 				/*On fait tous le trajet suivant le mapping*/
 				for (String s:diseaseIdFromOrpha ){
 					//System.out.println(s);
-					ArrayList<String> diseaseLabelFromHpoAnnotation=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
-					for (String s2 : diseaseLabelFromHpoAnnotation){
-						//System.out.println(s+ "  :  "+s2);
-					}
+					String diseaseLabelFromHpoAnnotation=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
+					//for (String s2 : diseaseLabelFromHpoAnnotation){
+						System.out.println(s+ "  :  "+diseaseLabelFromHpoAnnotation);
+					//}
 				}
 			}
 

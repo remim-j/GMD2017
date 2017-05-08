@@ -21,6 +21,9 @@ import org.apache.lucene.queryparser.classic.ParseException;
 public class GlobalClass {
 
 private static ArrayList<String> suggestedEntry=new ArrayList<String>();
+
+private static ArrayList<String> HpOboDiseaseIdAdd=new ArrayList<String>();
+
 private static ResultsLists possibleDiseases=new  ResultsLists();
 private static ResultsLists possibleOriginOfSideEffect=new  ResultsLists();
 private static ResultsLists usefulMedecines=new  ResultsLists();
@@ -93,7 +96,6 @@ private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 
 		final ArrayList<String> stitchIdFromSider=AccesSider.getStitchIDByConceptName(userInput);
 		final ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name",userInput);
-		final ArrayList<String> diseaseNameFromOrpha=AccesOrphaDataBase.GetDeseaseByClinicalSign(userInput);
 
 
 	       		Future future2 = executorService.submit(new Runnable() {
@@ -105,34 +107,43 @@ private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 
 							}
 				    	}
-				    	if (symptomIdFromHpObo !=null){
-							for (String s : symptomIdFromHpObo){
-								ArrayList<String> diseaseLabel;
-								try {
-									diseaseLabel = ReadHpoAnnotations.getDiseaseLabelBySignId(s);
-									for(String s1:diseaseLabel){
-										possibleDiseases.add(s1, "Hpo Annotation");
-									}
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+				    	
 
-							}
-						}
-
-
-						if (diseaseNameFromOrpha !=null){
-							for (String s : diseaseNameFromOrpha){
-								possibleDiseases.add(s, "OrphaData");
-
-							}
-
-						}
+						
 
 
 				    }
 				});
+	       		
+				final ExecutorService executorService2Bis = Executors.newFixedThreadPool(NUM_CORES);
+
+				List<Future<?>> futures_2Bis  = new LinkedList<Future<?>>();
+				
+			       		if (symptomIdFromHpObo !=null){
+							for (String s : symptomIdFromHpObo){
+								Future future2Bis = executorService2Bis.submit(new Runnable() {
+								    public void run() {
+										ArrayList<String> diseaseLabel;
+										try {
+											diseaseLabel = ReadHpoAnnotations.getDiseaseLabelBySignId(s);
+											for(String s1:diseaseLabel){
+												//HpOboDiseaseIdAdd.add(ReadHpoAnnotations.getDiseaseIdByLabel(s1));
+												String label=ReadHpoAnnotations.getDiseaseIdByLabel(s1);
+												possibleDiseases.saveId(label,s1);
+												possibleDiseases.add(s1, "Hp.obo + Hpo Annotation");
+											}
+										} catch (Exception e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+		
+							}});
+								futures_2Bis.add(future2Bis);
+			       		}
+				    }
+				
+				    
+
 
 
 
@@ -221,7 +232,7 @@ private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 		       	double durationT = (firstTime - secondTimeT)/Math.pow(10,9);
 	       		System.out.println("duration T "+durationT);
 
-
+				final ExecutorService executorService4 = Executors.newFixedThreadPool(NUM_CORES);
 				 List<Future<?>> futures4 = new LinkedList<Future<?>>();
 
 	       	 if (diseaseIdFromOrpha != null){
@@ -229,11 +240,27 @@ private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 	 					Future future11 = executorService.submit(new Runnable() {
 							public void run() {
 								try {
-									ArrayList<String> diseaseLabelFromHpoAnnotation = ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
-									for (String s2 : diseaseLabelFromHpoAnnotation){
-										possibleDiseases.add(s2, "OrphaData + Hpo Annotation");
+									if(/*!HpOboDiseaseIdAdd.contains(s)*/!possibleDiseases.alreadySave(s)){
+										/*the disease have not still been add in disease list (by Hpo.annotations*/
+										String diseaseLabelFromHpoAnnotation = ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
+										if(diseaseLabelFromHpoAnnotation != null){
+												possibleDiseases.add(diseaseLabelFromHpoAnnotation, "OrphaData + Hpo Annotation");
+										}
+										else{
+											
+											for(String s3: AccesOrphaDataBase.GetDeseaseByDiseaseId(Integer.parseInt(s))){
+												possibleDiseases.add(s3, "OrphaData");
 
-				 					}
+											}
+										}
+										
+									}else{
+										
+										/*the disease have already been add.so we updte his origin list*/
+										possibleDiseases.addOriginOnly(s,"OrphaData");
+									}
+									
+									
 								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -254,30 +281,40 @@ private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 	              * diseaseNameFromOmim.
 	              * We have to check!
 	              */
-
+	       	
 			ArrayList<String> diseaseIdFromOmim=ReadOmim.getNO("CS",userInput);
 
 	             if (diseaseIdFromOmim!=null){
 	            	 for (String s :diseaseIdFromOmim){
-							ArrayList<String> diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
-							for(String s1: diseaseLabelFromHpoAnnot){
-								possibleDiseases.add(s1, "Omim + Hpo Annotations");
-							}
+	            		 /*we test if this disease has already be add in HP Annotation or not*/
+	            		 	if (/*!HpOboDiseaseIdAdd.contains(s)*/!possibleDiseases.alreadySave(s)){
+	            		 		String diseaseLabelFromHpoAnnot=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
+	            		 		if (diseaseLabelFromHpoAnnot!= null){
+	            		 		/*We found the disease in HPObo.Annotation so we add it there*/
+									possibleDiseases.add(diseaseLabelFromHpoAnnot, "Omim + Hpo Annotations");
+	            		 		}
+	            		 		else{
+	            		 			/*We dont find the disease in Hpo Annotations so we add it in OMIM directly*/
+	            		 	       	ArrayList<String> diseaseFromOmim=ReadOmim.getTI("NO",s);
+	            		 	       if (diseaseFromOmim!=null){
+	            		 				for(String s1:diseaseFromOmim){
+	            		 					possibleDiseases.add(s1, "Omim");
+	            		 				}
+	            		 			}
+
+	            		 		}
+								
+	            		 	}
+	            		 	/*the disease has already been add to disease list so we just refresh his origin list*/
+	            		 	else{
+	            		 		possibleDiseases.addOriginOnly(s, "OMIM");
+								
+	            		 	}
+	            		 	
+							
 	            	 }
 	             }
-
-	 	       	ArrayList<String> diseaseFromOmim=ReadOmim.getTI("CS",userInput);
-
-
-	             if (diseaseFromOmim!=null){
-	 				for(String s:diseaseFromOmim){
-	 					possibleDiseases.add(s, "Omim");
-	 				}
-	 			}
-
-
-
-
+	
 	 			long attenteDebutfirst = System.nanoTime();
 
 
@@ -327,13 +364,28 @@ private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 		        catch (ExecutionException   e) { }
 		    }
        		long attentefuture4Fin = System.nanoTime();
+       		
+       		long attentefuture2Bis = System.nanoTime();
+       		for (Future<?> f : futures_2Bis)
+		    {
+		        try   { f.get(); }
+		        catch (InterruptedException e) { }
+		        catch (ExecutionException   e) { }
+		    }
+       		long attentefuture2BisFin = System.nanoTime();
+       		double durFuture2Bis = (attentefuture2Bis- attentefuture2BisFin)/Math.pow(10,9);
+
        		double durFuture4 = (attentefuture4 - attentefuture4Fin)/Math.pow(10,9);
 
        		System.out.println("future 2 :"+durFuture2);
        		System.out.println("future 4 :"+durFuture4);
-       		System.out.println("attente fin totale : "+(attentefuture4Fin-attenteDebutfirst)/Math.pow(10,9));
+       		System.out.println("future 2Bis :"+durFuture2Bis);
+
+       		System.out.println("attente fin totale : "+(attentefuture2BisFin-attenteDebutfirst)/Math.pow(10,9));
 
 	executorService.shutdown();
+	executorService2Bis.shutdown();
+	executorService4.shutdown();
 
 
 

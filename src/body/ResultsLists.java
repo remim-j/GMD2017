@@ -11,10 +11,12 @@ import java.util.Map.Entry;
 public class ResultsLists {
 
 
-	public HashMap<String,ArrayList<String>> hashmap;
+	public HashMap<String,ArrayList<String>> hashmap;//String is the disease name and list is list of origin bases of the disease
+	public HashMap<String,String>IdToName;//Only for diseases
 
 	public ResultsLists(){
 		hashmap=new HashMap<String,ArrayList<String>>();
+		IdToName=new HashMap<String,String>();
 	}
 
 	/*we add a results to the result list*/
@@ -81,8 +83,32 @@ public class ResultsLists {
 
 	}
 	
+	/*to add an origin to a disease already add with another name in another database*/
+	/*we detect it with the id either from orpha or from Omim*/
+	public void addOriginOnly(String id,String newOrigin){
+		String disease=IdToName.get(id);
+		ArrayList<String> origins=hashmap.get(disease);
+		origins.add(newOrigin);
+		hashmap.put(disease,origins);
+	}
+	
+	public void saveId(String id,String diseaseName){
+		IdToName.put(id, diseaseName);
+	}
+	
+	public boolean alreadySave(String id){
+		if (IdToName.containsKey(id)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	
 	public void clear(){
 		hashmap.clear();
+		IdToName.clear();
 	}
 
 }

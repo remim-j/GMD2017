@@ -37,6 +37,14 @@ public class Interface implements Initializable{
 	private ArrayList<String> normOriginMed;
 
     private String userInput;
+    
+    ObservableList<String> oNameDisease ;	
+    ObservableList<String> oNameSideEffect ;
+	ObservableList<String> oNameMedecine;
+	ObservableList<String> oOriginSE;
+	ObservableList<String> oOrigin ;
+	ObservableList<String> oOringinMedecine; 
+	
 
     @FXML
     private TextField UserInput;
@@ -64,12 +72,17 @@ public class Interface implements Initializable{
 	body.GlobalClass globalClass=new GlobalClass();
 
 	public App App;
+	
+	Boolean first=true;
 
 
 	public void bouton(ActionEvent e){	//Get the input of the user, and launch the research
 		
 		/*clear last search*/
-		clearItems();
+		if (first==false){
+			clearItems();
+		}
+		first=false;
 		userInput = UserInput.getText();
 		//body.GlobalClass.userInput = userInput;
 		
@@ -166,12 +179,12 @@ public class Interface implements Initializable{
 	}
 
 	public void setItems(){
-		ObservableList<String> oNameDisease = FXCollections.observableArrayList(nameDisease);
-		ObservableList<String> oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
-		ObservableList<String> oNameMedecine = FXCollections.observableArrayList(nameMedecine);
-		ObservableList<String> oOriginSE = FXCollections.observableArrayList(normOriginSE);
-		ObservableList<String> oOrigin = FXCollections.observableArrayList(normOrigin);
-		ObservableList<String> oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
+		 oNameDisease = FXCollections.observableArrayList(nameDisease);
+		 oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
+		oNameMedecine = FXCollections.observableArrayList(nameMedecine);
+		 oOriginSE = FXCollections.observableArrayList(normOriginSE);
+		 oOrigin = FXCollections.observableArrayList(normOrigin);
+		 oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
 		
 		Diseases.setItems(oNameDisease);
 	    SideEffect.setItems(oNameSideEffect);
@@ -186,9 +199,11 @@ public class Interface implements Initializable{
 	
 	public void clearItems(){
 		
-		globalClass.clearList();
+		oNameDisease.clear();
 		Diseases.getItems().clear();
 		Diseases.refresh();
+		globalClass.clearList();
+		
 		SideEffect.getItems().clear();
 		SideEffect.refresh();
 		Medecine.getItems().clear();

@@ -26,9 +26,13 @@ public class AccesOrphaDataBase {
 	//http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/diseases/_view/GetDiseasesNumber?key=512
 	
 	public static ArrayList<String> GetDeseaseByClinicalSign(String symptom){
-		symptom=symptom.replace(" ","%20");
+		String start=symptom;
+		String end=symptom+"z";
+		start=start.replace(" ","%20");
+		end=end.replace(" ","%20");
 
-		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?key=%22"+symptom+"%22";
+		//http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?startkey=%22hypo%22&endkey=%22hypoz%22
+		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?startkey=%22"+start+"%22&endkey=%22"+end+"%22";
 		long duration=0;
 		ArrayList<String> diseases= new ArrayList<String>();
 		try {			
@@ -66,9 +70,12 @@ public class AccesOrphaDataBase {
 	
 public static ArrayList<String> GetDeseaseIdByClinicalSign(String symptom){
 		
-	symptom=symptom.replace(" ","%20");
+	String start=symptom;
+	String end=symptom+"z";
+	start=start.replace(" ","%20");
+	end=end.replace(" ","%20");
 	//System.out.println(symptom);
-		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?key=%22"+symptom+"%22";
+		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?startkey=%22"+start+"%22&endkey=%22"+end+"%22";
 		long duration=0;
 		ArrayList<String> diseaseIdList= new ArrayList<String>();
 		try {			
@@ -145,7 +152,7 @@ public static ArrayList<String> GetDeseaseByDiseaseId(int num){
 	
 	public static void main(String[] args) {
 		
-		ArrayList<String>liste =GetDeseaseIdByClinicalSign("Anomalies of ear and hearing");
+		ArrayList<String>liste =GetDeseaseIdByClinicalSign("hypo");
 		for (String s : liste){
 			System.out.println(s);
 		}
