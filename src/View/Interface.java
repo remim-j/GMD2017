@@ -1,5 +1,6 @@
 package View;
 
+import java.io.Closeable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +12,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Slider;
 import body.*;
 import javafx.scene.control.TextField;
-
+import javafx.scene.layout.VBox;
 import View.App;
 
 public class Interface implements Initializable{
@@ -59,26 +64,33 @@ public class Interface implements Initializable{
     @FXML
     public ListView<String> OriginOfDisease;
 
+    @FXML
+    public ProgressIndicator pi = new ProgressIndicator(0);
+
+    @FXML
+    public VBox hb = new VBox();
+
+
 	ArrayList<String> disease=new ArrayList<String>();
-	
+
 	body.GlobalClass globalClass=new GlobalClass();
 
 	public App App;
 
 
 	public void bouton(ActionEvent e){	//Get the input of the user, and launch the research
-		
+
 		/*clear last search*/
 		clearItems();
 		userInput = UserInput.getText();
 		//body.GlobalClass.userInput = userInput;
-		
+
 		globalClass.doSearch(userInput);
 		int n = disease.size();		//Initializing the arrayList
 		for ( int i = 0; i < n; i++){
 			disease.remove(i);
 		}
-		
+
 		possibleDiseases = globalClass.getPossibleDiseases();
 		possibleOriginOfSideEffect = globalClass.getPossibleOriginOfSideEffect();
 		usefulMedecines = globalClass.getUsefulMedecines();
@@ -90,10 +102,19 @@ public class Interface implements Initializable{
 		normOriginMed = normalize(originMedecine);
 		normOriginSE = normalize(originSE);
 		normOrigin = normalize(origin);
-
+		hb.getChildren().remove(pi);
+		hb.setVisible(false);
+		hb.managedProperty().bind(hb.visibleProperty());
+		/*hb.setManaged(false);
+		pi.setVisible(false);
+		pi.managedProperty().bind(hb.visibleProperty());
+		//pi.setManaged(false);
+		slider.setVisible(false);
+		slider.managedProperty().bind(hb.visibleProperty());
+		//slider.setManaged(false);*/
 		setItems();
 		System.out.println("J'ai fini");
-		
+
 	}
 
 ////////////////////////////////////////////////////////////////Displaying the results ////////////////////////////////////////////////////////////
@@ -132,7 +153,7 @@ public class Interface implements Initializable{
 
     public void setMain(App App) {
     	this.App = App;
-    	
+
     	//initialize all variables
     	 nameDisease=new ArrayList<String>();
     	origin =new ArrayList<ArrayList<String>>();
@@ -161,7 +182,7 @@ public class Interface implements Initializable{
 				normOriginA.add(sb.toString());
 			}
 		}
-		
+
 		return normOriginA;
 	}
 
@@ -172,20 +193,20 @@ public class Interface implements Initializable{
 		ObservableList<String> oOriginSE = FXCollections.observableArrayList(normOriginSE);
 		ObservableList<String> oOrigin = FXCollections.observableArrayList(normOrigin);
 		ObservableList<String> oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
-		
+
 		Diseases.setItems(oNameDisease);
 	    SideEffect.setItems(oNameSideEffect);
 	    Medecine.setItems(oNameMedecine);
 	    OriginOfSideEffect.setItems(oOriginSE);
 	    OriginOfMedecine.setItems(oOringinMedecine);
 	    OriginOfDisease.setItems(oOrigin);
-	    
-	    
+
+
 	}
-	
-	
+
+
 	public void clearItems(){
-		
+
 		globalClass.clearList();
 		Diseases.getItems().clear();
 		Diseases.refresh();
