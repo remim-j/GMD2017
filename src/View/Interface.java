@@ -1,6 +1,5 @@
 package View;
 
-import java.io.Closeable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +11,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.Slider;
 import body.*;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -74,9 +70,40 @@ public class Interface implements Initializable{
 
 	public App App;
 
+	ObservableList<String> oNameDisease = FXCollections.observableArrayList();
+	ObservableList<String> oNameSideEffect = FXCollections.observableArrayList();
+	ObservableList<String> oNameMedecine = FXCollections.observableArrayList();
+	ObservableList<String> oOriginSE = FXCollections.observableArrayList();
+	ObservableList<String> oOrigin = FXCollections.observableArrayList();
+	ObservableList<String> oOriginMedecine = FXCollections.observableArrayList();
+
 
 	public void bouton(ActionEvent e){	//Get the input of the user, and launch the research
 
+		int n = oNameDisease.size();
+		for ( int i = 0; i < n; i++){
+			oNameDisease.remove(0);
+		}
+		n = oNameSideEffect.size();
+		for ( int i = 0; i < n; i++){
+			oNameSideEffect.remove(0);
+		}
+		n = oNameMedecine.size();
+		for ( int i = 0; i < n; i++){
+			oNameMedecine.remove(0);
+		}
+		n = oOriginSE.size();
+		for ( int i = 0; i < n; i++){
+			oOriginSE.remove(0);
+		}
+		n = oOrigin.size();
+		for ( int i = 0; i < n; i++){
+			oOrigin.remove(0);
+		}
+		n = oOriginMedecine.size();
+		for ( int i = 0; i < n; i++){
+			oOriginMedecine.remove(0);
+		}
 		/*clear last search*/
 		clearItems();
 		userInput = UserInput.getText();
@@ -176,18 +203,18 @@ public class Interface implements Initializable{
 	}
 
 	public void setItems(){
-		ObservableList<String> oNameDisease = FXCollections.observableArrayList(nameDisease);
-		ObservableList<String> oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
-		ObservableList<String> oNameMedecine = FXCollections.observableArrayList(nameMedecine);
-		ObservableList<String> oOriginSE = FXCollections.observableArrayList(normOriginSE);
-		ObservableList<String> oOrigin = FXCollections.observableArrayList(normOrigin);
-		ObservableList<String> oOringinMedecine = FXCollections.observableArrayList(normOriginMed);
+		oNameDisease = FXCollections.observableArrayList(nameDisease);
+		oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
+		oNameMedecine = FXCollections.observableArrayList(nameMedecine);
+		oOriginSE = FXCollections.observableArrayList(normOriginSE);
+		oOrigin = FXCollections.observableArrayList(normOrigin);
+		oOriginMedecine = FXCollections.observableArrayList(normOriginMed);
 
 		Diseases.setItems(oNameDisease);
 	    SideEffect.setItems(oNameSideEffect);
 	    Medecine.setItems(oNameMedecine);
 	    OriginOfSideEffect.setItems(oOriginSE);
-	    OriginOfMedecine.setItems(oOringinMedecine);
+	    OriginOfMedecine.setItems(oOriginMedecine);
 	    OriginOfDisease.setItems(oOrigin);
 
 
