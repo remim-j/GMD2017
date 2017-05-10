@@ -25,20 +25,10 @@ public class Interface implements Initializable{
 	private ResultsLists usefulMedecines = new  ResultsLists();
 
 	private ArrayList<String> disease;
-	private ArrayList<String> nameDisease;
-	private ArrayList<ArrayList<String>> origin;
-	private ArrayList<String> normOrigin;
-
 
 	private ArrayList<String> sideEffect;
-	private ArrayList<String> nameSideEffect;
-	private ArrayList<ArrayList<String>> originSE;
-	private ArrayList<String> normOriginSE;
 
 	private ArrayList<String> medecine;
-	private ArrayList<String> nameMedecine;
-	private ArrayList<ArrayList<String>> originMedecine;
-	private ArrayList<String> normOriginMed;
 
     private String userInput;
 
@@ -113,15 +103,7 @@ public class Interface implements Initializable{
     private void dispMedecine(ResultsLists usefulMedecines2) {
     	HashMap<String,ArrayList<String>> hashMap = usefulMedecines2.hashmap;
     	for (String mapKey : hashMap.keySet()) {
-    		originMedecine.add(hashMap.get(mapKey));
-    		nameMedecine.add(mapKey);
-    	}for(String s : nameMedecine){
-    		medecine.add(s);
-    	}
-    	medecine.add("  ");
-    	normOriginMed = normalize(originMedecine);
-    	for(String s : normOriginMed){
-    		medecine.add(s);
+    		medecine.add(mapKey + normalize(hashMap.get(mapKey)));
     	}
 	}
 
@@ -129,16 +111,7 @@ public class Interface implements Initializable{
 	private void dispSideEffect(ResultsLists possibleOriginOfSideEffect2) {
 		HashMap<String,ArrayList<String>> hashMap = possibleOriginOfSideEffect2.hashmap;
     	for (String mapKey : hashMap.keySet()) {
-    		originSE.add(hashMap.get(mapKey));
-    		nameSideEffect.add(mapKey);
-    	}
-    	for(String s : nameSideEffect){
-    		sideEffect.add(s);
-    	}
-    	sideEffect.add("  ");
-    	normOriginSE = normalize(originSE);
-    	for(String s : normOriginSE){
-    		sideEffect.add(s);
+    		sideEffect.add(mapKey + normalize(hashMap.get(mapKey)));
     	}
 	}
 
@@ -146,16 +119,7 @@ public class Interface implements Initializable{
 	private void dispDiseases(ResultsLists possibleDiseases2) {
 		HashMap<String,ArrayList<String>> hashMap = possibleDiseases2.getHashmap();
     	for (String mapKey : hashMap.keySet()) {
-    		origin.add(hashMap.get(mapKey));
-    		nameDisease.add(mapKey);
-    	}
-    	for(String s : nameDisease){
-    		disease.add(s);
-    	}
-    	disease.add("  ");
-    	normOrigin = normalize(origin);
-    	for(String s : normOrigin){
-    		disease.add(s);
+    		disease.add(mapKey + normalize(hashMap.get(mapKey)));
     	}
 	}
 
@@ -168,41 +132,26 @@ public class Interface implements Initializable{
     	this.App = App;
 
     	//initialize all variables
-    	 nameDisease=new ArrayList<String>();
-    	origin =new ArrayList<ArrayList<String>>();
-    	normOrigin=new ArrayList<String>();
+
     	disease = new ArrayList<String>();
 
+    	sideEffect = new ArrayList<String>();
 
-    	 nameSideEffect=new ArrayList<String>();
-    	 originSE=new ArrayList<ArrayList<String>>();;
-    	 normOriginSE=new ArrayList<String>();
-    	 sideEffect = new ArrayList<String>();
-
-    	 nameMedecine=new ArrayList<String>();
-    	 originMedecine=new ArrayList<ArrayList<String>>();;
-    	normOriginMed=new ArrayList<String>();
     	medecine = new ArrayList<String>();
 	}
 
 
-	public ArrayList<String> normalize(ArrayList<ArrayList<String>> originA){
-		ArrayList<String> normOriginA = new ArrayList<String>();
-		if(originA != null){
-			for(ArrayList<String> list : originA){
-				StringBuilder sb = new StringBuilder();
-				sb.append("(");
-				for (String s : list){
-				    sb.append(s);
-				    sb.append(", ");
-				}
-				sb.append(")");
-				normOriginA.add(sb.toString());
+	public String normalize(ArrayList<String> originA){
+		String normOriginA = "";
+		if(originA.equals("")){
+			for(String s : originA){
+				System.out.println(s);
+				normOriginA = normOriginA + ", " + s;
 			}
 		}
-
 		return normOriginA;
 	}
+
 
 	public void setItems(){
 
