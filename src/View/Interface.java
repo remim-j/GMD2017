@@ -171,15 +171,18 @@ public class Interface implements Initializable{
     	 nameDisease=new ArrayList<String>();
     	origin =new ArrayList<ArrayList<String>>();
     	normOrigin=new ArrayList<String>();
+    	disease = new ArrayList<String>();
 
 
     	 nameSideEffect=new ArrayList<String>();
     	 originSE=new ArrayList<ArrayList<String>>();;
     	 normOriginSE=new ArrayList<String>();
+    	 sideEffect = new ArrayList<String>();
 
     	 nameMedecine=new ArrayList<String>();
     	 originMedecine=new ArrayList<ArrayList<String>>();;
     	normOriginMed=new ArrayList<String>();
+    	medecine = new ArrayList<String>();
 	}
 
 
