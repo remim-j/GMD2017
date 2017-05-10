@@ -24,15 +24,18 @@ public class Interface implements Initializable{
 	private ResultsLists possibleOriginOfSideEffect = new  ResultsLists();
 	private ResultsLists usefulMedecines = new  ResultsLists();
 
+	private ArrayList<String> disease;
 	private ArrayList<String> nameDisease;
 	private ArrayList<ArrayList<String>> origin;
 	private ArrayList<String> normOrigin;
 
 
+	private ArrayList<String> sideEffect;
 	private ArrayList<String> nameSideEffect;
 	private ArrayList<ArrayList<String>> originSE;
 	private ArrayList<String> normOriginSE;
 
+	private ArrayList<String> medecine;
 	private ArrayList<String> nameMedecine;
 	private ArrayList<ArrayList<String>> originMedecine;
 	private ArrayList<String> normOriginMed;
@@ -52,15 +55,6 @@ public class Interface implements Initializable{
     public ListView<String> SideEffect;
 
     @FXML
-    public ListView<String> OriginOfSideEffect;
-
-    @FXML
-    public ListView<String> OriginOfMedecine;
-
-    @FXML
-    public ListView<String> OriginOfDisease;
-
-    @FXML
     public ProgressIndicator pi = new ProgressIndicator(0);
 
     @FXML
@@ -70,40 +64,25 @@ public class Interface implements Initializable{
 
 	public App App;
 
-	ObservableList<String> oNameDisease = FXCollections.observableArrayList();
-	ObservableList<String> oNameSideEffect = FXCollections.observableArrayList();
-	ObservableList<String> oNameMedecine = FXCollections.observableArrayList();
-	ObservableList<String> oOriginSE = FXCollections.observableArrayList();
-	ObservableList<String> oOrigin = FXCollections.observableArrayList();
-	ObservableList<String> oOriginMedecine = FXCollections.observableArrayList();
-
+	ObservableList<String> oDisease = FXCollections.observableArrayList();
+	ObservableList<String> oSideEffect = FXCollections.observableArrayList();
+	ObservableList<String> oMedecine = FXCollections.observableArrayList();
 
 	public void bouton(ActionEvent e){	//Get the input of the user, and launch the research
 
-		int n = oNameDisease.size();
+		int n = oDisease.size();
 		for ( int i = 0; i < n; i++){
-			oNameDisease.remove(0);
+			oDisease.remove(0);
 		}
-		n = oNameSideEffect.size();
+		n = oSideEffect.size();
 		for ( int i = 0; i < n; i++){
-			oNameSideEffect.remove(0);
+			oSideEffect.remove(0);
 		}
-		n = oNameMedecine.size();
+		n = oMedecine.size();
 		for ( int i = 0; i < n; i++){
-			oNameMedecine.remove(0);
+			oMedecine.remove(0);
 		}
-		n = oOriginSE.size();
-		for ( int i = 0; i < n; i++){
-			oOriginSE.remove(0);
-		}
-		n = oOrigin.size();
-		for ( int i = 0; i < n; i++){
-			oOrigin.remove(0);
-		}
-		n = oOriginMedecine.size();
-		for ( int i = 0; i < n; i++){
-			oOriginMedecine.remove(0);
-		}
+
 		/*clear last search*/
 		clearItems();
 		userInput = UserInput.getText();
@@ -118,10 +97,6 @@ public class Interface implements Initializable{
 		dispDiseases(possibleDiseases);
 		dispSideEffect(possibleOriginOfSideEffect);
 		dispMedecine(usefulMedecines);
-
-		normOriginMed = normalize(originMedecine);
-		normOriginSE = normalize(originSE);
-		normOrigin = normalize(origin);
 
 		//Hiding loading pane
 		hb.getChildren().remove(pi);
@@ -140,8 +115,14 @@ public class Interface implements Initializable{
     	for (String mapKey : hashMap.keySet()) {
     		originMedecine.add(hashMap.get(mapKey));
     		nameMedecine.add(mapKey);
+    	}for(String s : nameMedecine){
+    		medecine.add(s);
     	}
-
+    	medecine.add("  ");
+    	normOriginMed = normalize(originMedecine);
+    	for(String s : normOriginMed){
+    		medecine.add(s);
+    	}
 	}
 
 
@@ -151,6 +132,14 @@ public class Interface implements Initializable{
     		originSE.add(hashMap.get(mapKey));
     		nameSideEffect.add(mapKey);
     	}
+    	for(String s : nameSideEffect){
+    		sideEffect.add(s);
+    	}
+    	sideEffect.add("  ");
+    	normOriginSE = normalize(originSE);
+    	for(String s : normOriginSE){
+    		sideEffect.add(s);
+    	}
 	}
 
 
@@ -159,6 +148,14 @@ public class Interface implements Initializable{
     	for (String mapKey : hashMap.keySet()) {
     		origin.add(hashMap.get(mapKey));
     		nameDisease.add(mapKey);
+    	}
+    	for(String s : nameDisease){
+    		disease.add(s);
+    	}
+    	disease.add("  ");
+    	normOrigin = normalize(origin);
+    	for(String s : normOrigin){
+    		disease.add(s);
     	}
 	}
 
@@ -191,10 +188,12 @@ public class Interface implements Initializable{
 		if(originA != null){
 			for(ArrayList<String> list : originA){
 				StringBuilder sb = new StringBuilder();
+				sb.append("(");
 				for (String s : list){
 				    sb.append(s);
 				    sb.append(", ");
 				}
+				sb.append(")");
 				normOriginA.add(sb.toString());
 			}
 		}
@@ -203,21 +202,14 @@ public class Interface implements Initializable{
 	}
 
 	public void setItems(){
-		oNameDisease = FXCollections.observableArrayList(nameDisease);
-		oNameSideEffect = FXCollections.observableArrayList(nameSideEffect);
-		oNameMedecine = FXCollections.observableArrayList(nameMedecine);
-		oOriginSE = FXCollections.observableArrayList(normOriginSE);
-		oOrigin = FXCollections.observableArrayList(normOrigin);
-		oOriginMedecine = FXCollections.observableArrayList(normOriginMed);
 
-		Diseases.setItems(oNameDisease);
-	    SideEffect.setItems(oNameSideEffect);
-	    Medecine.setItems(oNameMedecine);
-	    OriginOfSideEffect.setItems(oOriginSE);
-	    OriginOfMedecine.setItems(oOriginMedecine);
-	    OriginOfDisease.setItems(oOrigin);
+		oDisease = FXCollections.observableArrayList(disease);
+		oSideEffect = FXCollections.observableArrayList(sideEffect);
+		oMedecine = FXCollections.observableArrayList(medecine);
 
-
+		Diseases.setItems(oDisease);
+	    SideEffect.setItems(oSideEffect);
+	    Medecine.setItems(oMedecine);
 	}
 
 
@@ -230,8 +222,5 @@ public class Interface implements Initializable{
 		SideEffect.refresh();
 		Medecine.getItems().clear();
 		Medecine.refresh();
-		OriginOfSideEffect.getItems().clear();
-		OriginOfMedecine.getItems().clear();
-		OriginOfDisease.getItems().clear();
 	}
 }
