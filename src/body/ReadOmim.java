@@ -83,7 +83,7 @@ public abstract class ReadOmim {
 		try {
 			ReadOmim(field, query);
 			return symptomTI;
-		} catch (IOException | ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -94,8 +94,7 @@ public abstract class ReadOmim {
 		try {
 			ReadOmim(field, query);
 			return symptomNO;
-		} catch (IOException | ParseException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;

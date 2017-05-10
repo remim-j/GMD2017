@@ -120,7 +120,7 @@ private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 				List<Future<?>> futures_2Bis  = new LinkedList<Future<?>>();
 				
 			       		if (symptomIdFromHpObo !=null){
-							for (String s : symptomIdFromHpObo){
+							for (final String s : symptomIdFromHpObo){
 								Future future2Bis = executorService2Bis.submit(new Runnable() {
 								    public void run() {
 										ArrayList<String> diseaseLabel;
