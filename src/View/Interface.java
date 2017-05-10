@@ -143,7 +143,7 @@ public class Interface implements Initializable{
 
 	public String normalize(ArrayList<String> originA){
 		String normOriginA = "";
-		if(originA.equals("")){
+		if(!originA.equals("")){
 			for(String s : originA){
 				System.out.println(s);
 				normOriginA = normOriginA + ", " + s;
