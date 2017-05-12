@@ -67,8 +67,8 @@
    <top>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="86.0" prefWidth="823.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="579.0" layoutY="37.0" mnemonicParsing="false" onAction="#bouton" prefHeight="24.0" prefWidth="94.0" text="Rechercher" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="37.0" />
-            <TextField fx:id="UserInput" layoutX="26.0" layoutY="36.0" onAction="#bouton" prefHeight="30.0" prefWidth="501.0" promptText="Recherche" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="296.0" AnchorPane.topAnchor="36.0" />
+            <Button layoutX="579.0" layoutY="37.0" mnemonicParsing="false" onAction="#bouton" prefHeight="24.0" prefWidth="94.0" text="Search" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="125.0" AnchorPane.topAnchor="37.0" />
+            <TextField fx:id="UserInput" layoutX="26.0" layoutY="36.0" onAction="#bouton" prefHeight="30.0" prefWidth="501.0" promptText="Recherche" text="Enter your research here..." AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="296.0" AnchorPane.topAnchor="36.0" />
          </children>
       </AnchorPane>
    </top>
