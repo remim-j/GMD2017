@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -21,23 +22,23 @@ public class ResultsLists {
 
 	/*we add a results to the result list*/
 	public void add(String name,String origin){
-		if (hashmap.containsKey(name)){
-			ArrayList<String> originList=hashmap.get(name);
-			if (!originList.contains(origin)){
+		if (!name.equals("null")){
+			if (hashmap.containsKey(name)){
+				ArrayList<String> originList=hashmap.get(name);
+				if (!originList.contains(origin)){
+					originList.add(origin);
+				}
+			}else{
+				ArrayList<String> originList=new ArrayList<String>();
 				originList.add(origin);
+				hashmap.put(name,originList);
 			}
-		}else{
-			ArrayList<String> originList=new ArrayList<String>();
-			originList.add(origin);
-			hashmap.put(name,originList);
 		}
+		
 	}
 
 
-	public HashMap<String,ArrayList<String>> getHashmap(){
-		return hashmap;
-	}
-
+	
 	public  List<Entry<String, ArrayList<String>>> sortHashMap(){
 		 final List<Entry<String, ArrayList<String>>> entries = new ArrayList<Entry<String, ArrayList<String>>>(hashmap.entrySet());
 
@@ -61,7 +62,7 @@ public class ResultsLists {
 		  return entries;
 	}
 
-
+	/*to delete if we dont use console any more*/
 	public String toStringArrayList(ArrayList<String> array){
 		String s="";
 		for (String s1:array){
@@ -69,7 +70,18 @@ public class ResultsLists {
 		}
 		return s;
 	}
+	
+	
+	public HashMap<String,ArrayList<String>> sort(){
+		List<Entry<String, ArrayList<String>>> entries=sortHashMap();
+		LinkedHashMap<String,ArrayList<String>> sortMap= new LinkedHashMap<String,ArrayList<String>>();
+		 for ( Entry<String, ArrayList<String>> entry : entries) {
+			 		sortMap.put(entry.getKey(),entry.getValue());
+		 }
+		 return sortMap;
+	}
 
+	/*to delete if we dont use console an more*/
 	public String toString(){
 		String returnedString="";
 		List<Entry<String, ArrayList<String>>> entries=sortHashMap();

@@ -98,7 +98,28 @@ public abstract class ReadHpoAnnotations{
 		ArrayList<String> listeDiseaseLabel=new ArrayList<String>();
 		while (res.next()){
 			String label =res.getString("disease_label");
-			listeDiseaseLabel.add(label);
+			int  count=0;
+			if ((int)label.charAt(0) <65){
+				for (int i = 0;i < label.length();i++) {
+					if (label.charAt(i) == ' ') {
+						break;
+					} else {
+						count = count + 1;
+					}
+				}
+			}
+			label = label.substring((count));
+			String temp="";
+			for (int i = 0;i < label.length();i++) {
+				if (label.charAt(i) == ';') {
+					break;
+				} else {
+					temp = temp + label.charAt(i);
+				}
+			}
+			temp=temp.trim();
+			temp=temp.toUpperCase();
+			listeDiseaseLabel.add(temp);
 		}
 		return listeDiseaseLabel;
 	}
@@ -117,8 +138,28 @@ public abstract class ReadHpoAnnotations{
 					
 			while (res.next()){
 				String label =res.getString("disease_label");
-				
-				return label;
+				int  count=0;
+				if ((int)label.charAt(0) <65){
+					for (int i = 0;i < label.length();i++) {
+						if (label.charAt(i) == ' ') {
+							break;
+						} else {
+							count = count + 1;
+						}
+					}
+				}
+				label = label.substring((count));
+				String temp="";
+				for (int i = 0;i < label.length();i++) {
+					if (label.charAt(i) == ';') {
+						break;
+					} else {
+						temp = temp + label.charAt(i);
+					}
+				}
+				temp=temp.trim();
+				temp=temp.toUpperCase();
+				return temp;
 				
 			}
 			
@@ -145,6 +186,7 @@ public abstract class ReadHpoAnnotations{
 			
 			while (res.next()){
 				String label =res.getString("disease_id");
+				
 				return label;
 			}
 			
@@ -160,26 +202,27 @@ public abstract class ReadHpoAnnotations{
 	public static void main (String[] args){
 		
 		try {
+			
 			/*ArrayList<String> liste=getDiseaseLabelByDiseaseId("603629");
 			for (String s : liste){
 				System.out.println(s);
 			}*/
-			/*ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name","Small for gestational age");
+			ArrayList<String> symptomIdFromHpObo=ReadHpObo.getId("name","Small for gestational age");
 			if (symptomIdFromHpObo !=null){
 				//On fait tous le trajet suivant le mapping
 				
 				for (String s : symptomIdFromHpObo){
 					ArrayList<String> diseaseLabel=ReadHpoAnnotations.getDiseaseLabelBySignId(s);
-					System.out.println(diseaseLabel.size());
+					//System.out.println(diseaseLabel.size());
 					for(String s1:diseaseLabel){
 						System.out.println(s1);
 					}
 				}
-			}*/
-			ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign("Anomalies of ear and hearing");
+			}
+			/*ArrayList<String> diseaseIdFromOrpha=AccesOrphaDataBase.GetDeseaseIdByClinicalSign("Anomalies of ear and hearing");
 
 			if (diseaseIdFromOrpha != null){
-				/*On fait tous le trajet suivant le mapping*/
+				/*On fait tous le trajet suivant le mapping
 				for (String s:diseaseIdFromOrpha ){
 					//System.out.println(s);
 					String diseaseLabelFromHpoAnnotation=ReadHpoAnnotations.getDiseaseLabelByDiseaseId(s);
@@ -187,7 +230,7 @@ public abstract class ReadHpoAnnotations{
 						System.out.println(s+ "  :  "+diseaseLabelFromHpoAnnotation);
 					//}
 				}
-			}
+			}*/
 
 		
 		} catch (Exception e) {

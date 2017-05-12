@@ -79,6 +79,7 @@ public class ReadOminIndex {
 							temp = temp + line.charAt(i);
 						}
 					}
+					temp=temp.toUpperCase();
 					doc.add(new StoredField("TI", temp));
 					System.out.println("TI "+ temp); // to delete later
 				}

@@ -71,7 +71,7 @@ public abstract class ReadATC {
 			}
 			if (s != "") { // avoid void labels
 				//System.out.println(" : "+s); // to delete later
-				drugLabels.put(key.trim(),s.trim());
+				drugLabels.put(key.trim(),s.trim().toUpperCase());
 			}
 			s = "";
 			key = "";

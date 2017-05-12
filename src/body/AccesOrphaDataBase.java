@@ -53,7 +53,7 @@ public class AccesOrphaDataBase {
 				 String diseaseName=(String) objectName.get("text");
 				 
 				 /*add the disease to the the list*/
-				 diseases.add(diseaseName);
+				 diseases.add(diseaseName.toUpperCase());
 			 }
 			 
 			long endTime = System.nanoTime();
@@ -131,7 +131,7 @@ public static ArrayList<String> GetDeseaseByDiseaseId(int num){
 				 JSONObject objectValue =((JSONObject)object.get("value"));
 				 String diseaseName=(String) objectValue.get("Name");
 				 
-
+				 diseaseName.toUpperCase();
 				 /*add the disease to the the list*/
 				 diseases.add(diseaseName);
 				 
