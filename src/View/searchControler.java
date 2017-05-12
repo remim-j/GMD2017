@@ -23,7 +23,7 @@ private App App;
 		
 		 App.setUserInput(searchField.getText());
 		 App.changeScene(1);
-		 this.notifyAll();
+		 
 	 }
 	 
 	 
