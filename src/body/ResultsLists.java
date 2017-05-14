@@ -22,7 +22,7 @@ public class ResultsLists {
 
 	/*we add a results to the result list*/
 	public void add(String name,String origin){
-		if (!name.equals("null")){
+		if (name!=null){
 			if (hashmap.containsKey(name)){
 				ArrayList<String> originList=hashmap.get(name);
 				if (!originList.contains(origin)){
@@ -100,7 +100,10 @@ public class ResultsLists {
 	public void addOriginOnly(String id,String newOrigin){
 		String disease=IdToName.get(id);
 		ArrayList<String> origins=hashmap.get(disease);
-		origins.add(newOrigin);
+		if (! origins.contains(newOrigin)){
+			origins.add(newOrigin);
+		}
+		
 		hashmap.put(disease,origins);
 	}
 	

@@ -84,7 +84,7 @@ public class ReadHpOboIndex {
 						string = string + line.substring(i,i+1);
 						i++;
 					}
-					doc.add(new TextField("synonym", string, Field.Store.NO));
+					doc.add(new TextField("synonym", string, Field.Store.YES));
 					//System.out.println("synonym "+ string); // to delete later
 				}
 			      

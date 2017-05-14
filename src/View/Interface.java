@@ -48,7 +48,9 @@ public class Interface {
     @FXML
     public ListView<String> SideEffect;
 
-    @FXML Label progress;
+    @FXML Label result;
+    
+    @FXML Label resultName;
     
 
    @FXML Label title;
@@ -71,11 +73,21 @@ public class Interface {
 	    	sideEffect = new ArrayList<String>();
 	    	medecine = new ArrayList<String>();
 	    	
-	    	globalClass.doSearch(App.getUserInput());
+	    	String input=App.getUserInput();
+	    	if (input.endsWith("*") ){
+	    		input=input.substring(0,input.length()-2);
+	    		globalClass.doSearch(input);
+	    	}
+	    	else{
+	    		System.out.println("ici");
+	    		globalClass.doSearchFIX(input);
+
+	    	}
+	    	
 	    	
 	    	//get disease from globlaClass//
 	    	possibleDiseases = globalClass.getPossibleDiseases();
-			possibleOriginOfSideEffect = globalClass.getPossibleOriginOfSideEffect();
+			possibleOriginOfSideEffect = globalClass.getpossibleOriginSideEffect();
 			usefulMedecines = globalClass.getUsefulMedecines();
 
 			//set items in different listView//
@@ -88,8 +100,8 @@ public class Interface {
 			tailleSideEffect.setText(""+possibleOriginOfSideEffect.hashmap.size() +" results");
 			tailleMedecine.setText(""+usefulMedecines.hashmap.size()+ " results");
 			
-			/*set off the label*/
-			progress.setVisible(false);
+			
+			resultName.setText(App.getUserInput());
 			
 		}
 
@@ -155,10 +167,11 @@ public class Interface {
 	}
 	
 	public void research(){
+		clearItems();
 		App.changeScene(0);
 	}
 
-/*
+
 	public void clearItems(){
 
 		globalClass.clearList();
@@ -181,5 +194,5 @@ public class Interface {
 		for ( int i = 0; i < oMedecine.size(); i++){
 			oMedecine.remove(0);
 		}
-	}*/
+	}
 }

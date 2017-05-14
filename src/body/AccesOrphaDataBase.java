@@ -68,6 +68,46 @@ public class AccesOrphaDataBase {
 		return diseases;
 	}
 	
+	public static ArrayList<String> GetDeseaseByClinicalSignFIX(String symptom){
+		symptom=symptom.replace(" ","%20");
+
+		//http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?startkey=%22hypo%22&endkey=%22hypoz%22
+		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?key=%22"+symptom+"%22";
+		long duration=0;
+		ArrayList<String> diseases= new ArrayList<String>();
+		try {			
+			URL url = new URL(StringUrl);
+	
+			long startTime = System.nanoTime();
+			Reader in = new InputStreamReader(url.openStream());
+
+			JSONObject json = (JSONObject) JSONValue.parse(in);
+			 JSONArray Array =((JSONArray)json.get("rows"));
+			 
+			 for (int i=0;i<Array.size();i++){
+				 /*we parse the Json to obtain the name of te disease*/
+				 JSONObject object=(JSONObject) Array.get(i);
+				 JSONObject objectValue =((JSONObject)object.get("value"));
+				 JSONObject objectDisease=((JSONObject)objectValue.get("disease"));
+				 JSONObject objectName=((JSONObject)objectDisease.get("Name"));
+				 String diseaseName=(String) objectName.get("text");
+				 
+				 /*add the disease to the the list*/
+				 diseases.add(diseaseName.toUpperCase());
+			 }
+			 
+			long endTime = System.nanoTime();
+			duration = (endTime - startTime);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		//System.out.println(duration/Math.pow(10, 9));
+		if (diseases.size()==0){
+			return null;		
+			}
+		return diseases;
+	}
+	
 public static ArrayList<String> GetDeseaseIdByClinicalSign(String symptom){
 		
 	String start=symptom;
@@ -110,6 +150,45 @@ public static ArrayList<String> GetDeseaseIdByClinicalSign(String symptom){
 		}
 		return diseaseIdList;
 	}
+
+public static ArrayList<String> GetDeseaseIdByClinicalSignFIX(String symptom){
+	
+	symptom=symptom.replace(" ","%20");
+	//System.out.println(symptom);
+		String StringUrl="http://couchdb.telecomnancy.univ-lorraine.fr/orphadatabase/_design/clinicalsigns/_view/GetDiseaseByClinicalSign?key=%22"+symptom+"%22";
+		ArrayList<String> diseaseIdList= new ArrayList<String>();
+		try {			
+			URL url = new URL(StringUrl);
+	
+			long startTime = System.nanoTime();
+			Reader in = new InputStreamReader(url.openStream());
+
+			JSONObject json = (JSONObject) JSONValue.parse(in);
+			 JSONArray Array =((JSONArray)json.get("rows"));
+			 
+			 for (int i=0;i<Array.size();i++){
+				 /*we parse the Json to obtain the name of te disease*/
+				 JSONObject object=(JSONObject) Array.get(i);
+				 JSONObject objectValue =((JSONObject)object.get("value"));
+				 JSONObject objectDisease=((JSONObject)objectValue.get("disease"));
+				 Long diseaseIdLong=((Long)objectDisease.get("OrphaNumber"));
+				 String diseaseId=diseaseIdLong.toString();
+				 
+				 /*add the disease to the the list*/
+				 diseaseIdList.add(diseaseId);
+			 }
+			 
+			long endTime = System.nanoTime();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		//System.out.println(duration/Math.pow(10, 9));
+		if (diseaseIdList.size()==0){
+			return null;
+		}
+		return diseaseIdList;
+	}
+
 	
 public static ArrayList<String> GetDeseaseByDiseaseId(int num){
 		
@@ -144,9 +223,7 @@ public static ArrayList<String> GetDeseaseByDiseaseId(int num){
 			ex.printStackTrace();
 		}
 		//System.out.println(duration/Math.pow(10, 9));
-		if (diseases.size()==0){
-			diseases.add(num+"  is not found as a disease id ");
-		}
+		
 		return diseases;
 	}
 	

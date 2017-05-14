@@ -135,6 +135,88 @@ public abstract  class ReadOmimOnto {
         return null; //No matching ClassID found
     }
 
+	public static ArrayList<String> SymptomToCUIFIX(String stringSymptom) {
+
+        String csvFile = "omim_onto.csv";
+        BufferedReader br = null;
+        String line = "";
+        String separator = ",";
+        ArrayList<String> listeRetour=new ArrayList();
+
+        try {
+
+            br = new BufferedReader(new FileReader(csvFile));
+            while ((line = br.readLine()) != null) {
+
+                // Use comma as a separator
+                String[] symptom = line.split(separator);
+                String preferedLabel = symptom[1];
+                String preferedLabelSynonyms=symptom[2];
+                String cuiAjoute="";
+                if(preferedLabel.toLowerCase().equals(stringSymptom.toLowerCase()) || preferedLabelSynonyms.toLowerCase().equals(stringSymptom.toLowerCase())){  //If the IDs are the same
+                	
+                	String classID = (symptom[0].split("/"))[symptom[0].split("/").length-1];
+                    //System.out.println(classID);
+                	
+                    if(classID.startsWith("MTHU")){
+                    	/*because we found that cui in sider have
+                    	 * their classID in Omim_Onto which begin by MTHU
+                    	 */
+                    
+                    	//cui place can change so we do a if for each case
+                    	
+                    	if (symptom[symptom.length-3].startsWith("C")){
+                    		cuiAjoute=symptom[symptom.length-3];
+                    	}
+                    	else{
+                    		cuiAjoute=symptom[symptom.length-2];
+                    		
+                    	}
+                    	/*some lines contains many cui*/
+                    	if (cuiAjoute.contains("|")){
+                    		/*we first convert the the "|" by "," because it doesnt work when i split
+                    		 * with "|"
+                    		 */
+                    		String intermediate=cuiAjoute.replace('|',',');
+                    		String[]	diffCui=intermediate.split(separator);
+
+                    		for (int i=0;i<diffCui.length;i++){
+                    			if (!listeRetour.contains(diffCui[i])){
+                    				listeRetour.add(diffCui[i]);
+                    			}
+                        		
+                    		}
+                    	}
+                    	
+                    	else {
+                			if (!listeRetour.contains(cuiAjoute)){
+                				listeRetour.add(cuiAjoute);
+                			}
+
+                    	}
+                    }
+                	
+                }
+            }
+        }
+         catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (listeRetour.size()!=0){
+        	return listeRetour;
+        }
+        return null; //No matching ClassID found
+    }
 	
 	
 	public static String CUIToClassID(String CUI) {

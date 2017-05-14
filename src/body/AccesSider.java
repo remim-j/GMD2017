@@ -65,6 +65,38 @@ public abstract class AccesSider {
 		return idMedicinesList;
 	}
 	
+public static ArrayList<String> idMedicineSideEffectFIX(String side_effect) throws Exception {
+		
+		// activate connection
+		Class.forName(DRIVER);
+		Connection con = DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		
+		// SQL request
+		String myQuery = "SELECT * "+
+				" FROM meddra_all_se "+
+				" Where lower(side_effect_name)= ?; ";
+		
+		PreparedStatement st = con.prepareStatement(myQuery);
+		st.setString(1,(side_effect).toLowerCase()); 
+		ResultSet res = st.executeQuery();
+		
+		ArrayList<String> idMedicinesList = new ArrayList<String>();
+		while (res.next()){
+			String stitch_id = res.getString("stitch_compound_id1");
+			String stitch_id2 = res.getString("stitch_compound_id2");
+			
+			if (!idMedicinesList.contains(stitch_id)) {
+				idMedicinesList.add(stitch_id);
+			}
+			if (!idMedicinesList.contains(stitch_id2)) {
+				idMedicinesList.add(stitch_id2);
+			}
+		}
+		res.close();
+		st.close();
+		con.close();
+		return idMedicinesList;
+	}
 	
 	public static ArrayList<String> getStitchIDByConceptName(String concept_name) throws Exception {
 		
@@ -94,6 +126,33 @@ public abstract class AccesSider {
 		return idMedicinesList;
 	}
 	
+public static ArrayList<String> getStitchIDByConceptNameFIX(String concept_name) throws Exception {
+		
+		// activate connection
+		Class.forName(DRIVER);
+		Connection con = DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+		
+		// SQL request
+		String myQuery = "SELECT * "+
+				" FROM meddra_all_indications "+
+				" Where lower(concept_name)=?; ";
+		
+		PreparedStatement st = con.prepareStatement(myQuery);
+		st.setString(1,(concept_name).toLowerCase()); 
+		ResultSet res = st.executeQuery();
+		
+		ArrayList<String> idMedicinesList=new ArrayList<String>();
+		while (res.next()) {
+			String stitch_id =res.getString("stitch_compound_id");
+			if (!idMedicinesList.contains(stitch_id)) {
+				idMedicinesList.add(stitch_id);
+			}
+		}
+		res.close();
+		st.close();
+		con.close();
+		return idMedicinesList;
+	}
 	
 	public static ArrayList<String> cuiToCure(String concept_name) throws Exception {
 	
@@ -108,6 +167,34 @@ public abstract class AccesSider {
 		
 		PreparedStatement st = con.prepareStatement(myQuery);
 		st.setString(1,"%"+(concept_name).toLowerCase()+"%"); // take all diseases which contains the word
+		ResultSet res = st.executeQuery();
+	
+		ArrayList<String> listeCui = new ArrayList<String>();
+		while (res.next()) {
+			String cui =res.getString("cui");
+			if (!listeCui.contains(cui)){
+				listeCui.add(cui);
+			}
+		}
+		res.close();
+		st.close();
+		con.close();
+		return listeCui;
+	}
+	
+	public static ArrayList<String> cuiToCureFIX(String concept_name) throws Exception {
+		
+		// activate connection
+		Class.forName(DRIVER);
+		Connection con = DriverManager.getConnection(DB_SERVER+DB,USER_NAME,USER_PSWD);
+	
+		// SQL request
+		String myQuery = "SELECT * "+
+				" FROM meddra_all_indications "+
+				" Where lower(concept_name) =? ; ";
+		
+		PreparedStatement st = con.prepareStatement(myQuery);
+		st.setString(1,(concept_name).toLowerCase());
 		ResultSet res = st.executeQuery();
 	
 		ArrayList<String> listeCui = new ArrayList<String>();
