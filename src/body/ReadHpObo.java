@@ -43,10 +43,6 @@ public abstract class ReadHpObo {
 		IndexSearcher searcher = new IndexSearcher(reader);
 		Analyzer analyzer = new StandardAnalyzer();
 		QueryParser parser = new QueryParser(field, analyzer);
-		//TermQuery parser = new TermQuery(new Term(field.toString()));
-		//Query query = parser.parse(queryString);
-		
-		//Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
 		
 		String[] queries={queryString,queryString};
 		String[] fields={"name","synonym"};
@@ -87,10 +83,6 @@ private static void ReadHpOboFIX(String field, String queryString) throws IOExce
 		IndexSearcher searcher = new IndexSearcher(reader);
 		Analyzer analyzer = new KeywordAnalyzer() ;
 		QueryParser parser = new QueryParser(field, analyzer);
-		//TermQuery parser = new TermQuery(new Term(field.toString()));
-		//Query query = parser.parse(queryString);
-		
-		//Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
 		
 		String[] queries={queryString,queryString};
 		String[] fields={"name","synonym"};
@@ -119,7 +111,7 @@ private static void ReadHpOboFIX(String field, String queryString) throws IOExce
 	    	name = doc.get("name").substring(doc.get("name").indexOf(":")+2);
 	    	symptomeId.add(id);
 	    	
-	    	////System.out.println(doc.get("synonym"));
+	    	//System.out.println(doc.get("synonym"));
 	   
 	    }
 		reader.close();
@@ -152,13 +144,6 @@ private static void ReadHpOboFIX(String field, String queryString) throws IOExce
 			System.out.println(out);
 		}
 		System.out.println(output.size());
-	/*	field = "synonym";
-		query = "Abnormal growth";
-		System.out.println("\nInput \""+query+"\" on field \""+field+"\" corresponds to output : \n");
-		output = getId(field, query);
-		for (String out : output) {
-			System.out.println(out);
-		}*/
 		System.out.println("\nTime needed for one request Hp.obo : "+duration/Math.pow(10,9));
 	}
 	

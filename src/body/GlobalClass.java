@@ -609,7 +609,7 @@ public static void doSearchFIX(String userInput) {
 	
 	public static void main(String[] args) {
 		String userInput = "";
-		System.out.println("Entrer votre requette" +"|"+" q pour sortir");
+		System.out.println("Enter request" +"|"+" q to quit");
 		while (!"q".equals(userInput)) {
 			System.out.print(":> ");
 			userInput = sc.nextLine();
@@ -621,7 +621,7 @@ public static void doSearchFIX(String userInput) {
 				long endTime = System.nanoTime();
 				double duration = (endTime - startTime)/Math.pow(10,9);
 				System.out.println("\n Time needed : "+duration);
-				System.out.println("Entrer votre requette" +"|"+" q pour sortir");
+				System.out.println("Enter request" +"|"+" q to quit");
 			} catch (Exception e) {
 				System.out.println(e);
 			}

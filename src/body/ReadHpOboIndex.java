@@ -68,14 +68,14 @@ public class ReadHpOboIndex {
 					doc = new Document();
 				}
 				
-				// stocker and indexer name
+				// store and index name
 				if (line.startsWith("name:")) {
 					string = line.substring(6);
 					doc.add(new TextField("name", line,Field.Store.YES));
 					//System.out.println("name "+ string); // to delete later
 				}
 				
-				// indexer synonym
+				// index synonym
 				if (line.startsWith("synonym:")) {
 					line = line.substring(10);
 					i = 0;
@@ -88,14 +88,14 @@ public class ReadHpOboIndex {
 					//System.out.println("synonym "+ string); // to delete later
 				}
 			      
-				// indexer and stocker id
+				// index and store id
 				if (line.startsWith("id:")) {
 					string = line.substring(4);
 					doc.add(new TextField("id", line, Field.Store.YES));
 					//System.out.println("id "+ string); // to delete later
 				}
 			      
-				// stocker def
+				// store def
 				if (line.startsWith("def:")) {
 					line = line.substring(6);
 					i = 0;
@@ -108,7 +108,7 @@ public class ReadHpOboIndex {
 					//System.out.println("def "+ string); // to delete later
 				}
 				
-				// stocker is_a
+				// store is_a
 				if (line.startsWith("is_a:")) {
 					line = line.substring(6);
 					i = 0;
