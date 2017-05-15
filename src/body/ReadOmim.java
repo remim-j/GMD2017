@@ -80,7 +80,7 @@ private static void ReadOmimFIX(String field, String queryString) throws IOExcep
 		
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
-		Analyzer analyzer = new KeywordAnalyzer() ;;
+		Analyzer analyzer = new KeywordAnalyzer();
 		QueryParser parser = new QueryParser(field, analyzer);
 		Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
 		
@@ -116,26 +116,28 @@ private static void ReadOmimFIX(String field, String queryString) throws IOExcep
 		ReadOmim(field, query);
 	}
 	
+	
 	public static ArrayList<String> getTI(String field,String query) {
 		try {
 			ReadOmim(field, query);
 			return symptomTI;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
+	
 	public static ArrayList<String> getTIFIX(String field,String query) {
 		try {
 			ReadOmimFIX(field, query);
 			return symptomTI;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
 
 	public static ArrayList<String> getNO(String field,String query) {
 		try {
@@ -145,8 +147,9 @@ private static void ReadOmimFIX(String field, String queryString) throws IOExcep
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
+	
+	
 	public static ArrayList<String> getNOFIX(String field,String query) {
 		try {
 			ReadOmimFIX(field, query);
@@ -155,7 +158,6 @@ private static void ReadOmimFIX(String field, String queryString) throws IOExcep
 			e.printStackTrace();
 		}
 		return null;
-		
 	}
 	
 }
