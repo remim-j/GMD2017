@@ -79,7 +79,6 @@ public class Interface {
 	    		globalClass.doSearch(input);
 	    	}
 	    	else{
-	    		System.out.println("ici");
 	    		globalClass.doSearchFIX(input);
 
 	    	}

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -19,6 +21,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 
 /**
  * 
@@ -86,7 +89,7 @@ private static void ReadHpOboFIX(String field, String queryString) throws IOExce
 		IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
 		IndexSearcher searcher = new IndexSearcher(reader);
 		Analyzer analyzer = new KeywordAnalyzer() ;
-		QueryParser parser = new QueryParser(field, analyzer);
+		
 		//TermQuery parser = new TermQuery(new Term(field.toString()));
 		//Query query = parser.parse(queryString);
 		
@@ -94,11 +97,13 @@ private static void ReadHpOboFIX(String field, String queryString) throws IOExce
 		
 		String[] queries={queryString,queryString};
 		String[] fields={"name","synonym"};
-		BooleanClause.Occur[] occurs={BooleanClause.Occur.SHOULD,BooleanClause.Occur.SHOULD};
+		BooleanClause.Occur[] occurs={BooleanClause.Occur.MUST,BooleanClause.Occur.MUST};
 
 		//to remember MultiFieldQueryParser to search on many field
-		Query query = MultiFieldQueryParser.parse(queries,fields,occurs, analyzer);
-		System.out.println(query);
+		Query query = MultiFieldQueryParser.parse(queries,fields,occurs,new WhitespaceAnalyzer());
+		//Query query = MultiFieldQueryParser.parse(queries,  fields,new SimpleAnalyzer());
+		
+		//System.out.println(query);
 		//System.out.println("Searching for: " + query.toString(field)); // to delete later
 		
 	    TopDocs results = searcher.search(query, 100); // hope 100 is enough :)
@@ -141,7 +146,7 @@ private static void ReadHpOboFIX(String field, String queryString) throws IOExce
 	public static void main(String[] args) throws Exception {
 		System.out.println("Examples Hp.obo :");
 		String field = "name";
-		String query = "Anomalies";
+		String query = "Anomalies head";
 	
 		System.out.println("Input \""+query+"\" on field \""+field+"\" corresponds to output : \n");
 		long startTime = System.nanoTime();

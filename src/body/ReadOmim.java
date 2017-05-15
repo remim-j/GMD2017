@@ -14,6 +14,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
@@ -82,6 +83,8 @@ private static void ReadOmimFIX(String field, String queryString) throws IOExcep
 		IndexSearcher searcher = new IndexSearcher(reader);
 		Analyzer analyzer = new KeywordAnalyzer() ;;
 		QueryParser parser = new QueryParser(field, analyzer);
+		
+		//Query query =new PhraseQuery(field,queryString);
 		Query query = parser.createBooleanQuery(field, queryString, BooleanClause.Occur.MUST);
 		
 	    TopDocs results = searcher.search(query, 100);
@@ -158,5 +161,8 @@ private static void ReadOmimFIX(String field, String queryString) throws IOExcep
 		
 	}
 	
+	public static void main(String[] args){
+		
+	}
 }
 
